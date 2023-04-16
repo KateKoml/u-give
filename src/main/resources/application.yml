@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:postgresql://localhost:5432/u_give
+      maximum-pool-size: 20
+      driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/u_give
+    username: kate
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: update
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-description: Flyway Scripts
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    url: ${spring.datasource.url}
+    default-schema: public
+    out-of-order: true
+    ignore-migration-patterns: '*:ignored'
+
+application:
+  security:
+    jwt:
+      secret-key: 4IHJU69VRDFDC5DG954F6800hg6vy9GRFDf5
+      expiration: 60000 # 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
