@@ -1,36 +1,47 @@
 package com.ugive.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ugive.models.enums.Gender;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
-import static org.springframework.boot.devtools.restart.AgentReloader.isActive;
-
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Setter
+@Getter
+@EqualsAndHashCode(exclude = {
+        "roles"
+})
+@ToString(exclude = {
+        "roles"
+})
 @Entity
 @Table(name = "users")
 public class User {
@@ -49,17 +60,13 @@ public class User {
 
     private Gender gender = Gender.NOT_SELECTED;
 
-    @Column(name = "e_mail", nullable = false)
-    private String email;
-
     @Column(nullable = false)
     private String phone;
-
-    @Column(name = "user_login", nullable = false)
-    private String userLogin;
-
-    @Column(name = "user_password", nullable = false)
-    private String userPassword;
+    @Embedded
+    @AttributeOverride(name = "email", column = @Column(name = "e_mail", nullable = false))
+    @AttributeOverride(name = "login", column = @Column(name = "user_login", nullable = false))
+    @AttributeOverride(name = "password", column = @Column(name = "user_password", nullable = false))
+    private AuthenticationInfo authenticationInfo;
 
     @Column(nullable = false)
     private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
@@ -70,18 +77,28 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
+    @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties("users")
+    private Set<Role> roles = Collections.emptySet();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonManagedReference
+    private UserBalance userBalance;
+
+//    public List<Role> getRoles() {
+//    List<Role> roles = new ArrayList<>();
+//    // Получаем роли пользователя из базы данных
+//    // и добавляем их в список roles
+//    return roles;
+//}
+//
 //    @Override
 //    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        for (Role role : roles) {
-//            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
-//        }
-//        return authorities;
+//    List<Role> roles = getRoles();
+//
+//    return roles.stream()
+//            .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+//            .collect(Collectors.toList());
 //    }
 //
 //    @Override
