@@ -1,7 +1,13 @@
 package com.ugive.repositories.catalogs;
 
 import com.ugive.models.catalogs.PaymentType;
+import com.ugive.models.catalogs.ProductCondition;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface PaymentTypeRepository extends JpaRepository<PaymentType, Integer> {
+public interface PaymentTypeRepository extends
+        JpaRepository<PaymentType, Integer>,
+        PagingAndSortingRepository<PaymentType, Integer>,
+        CrudRepository<PaymentType, Integer> {
 }
