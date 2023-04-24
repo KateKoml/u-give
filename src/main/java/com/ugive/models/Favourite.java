@@ -1,49 +1,60 @@
 package com.ugive.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
+@Builder
 @Entity
 @Table(name = "favourites")
-public class Favourites {
+public class Favourite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
+    private User user;
 
-    @Column(name = "purchase_offer_id", nullable = false)
-    private Long purchaseOfferId;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @ManyToOne
+    @JoinColumn(name = "purchase_offer_id", nullable = false)
+    @JsonBackReference
+    private PurchaseOffer purchaseOffer;
 
+    @JsonIgnore
     @Column(nullable = false)
     private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
+    @JsonIgnore
     @Column(nullable = false)
     private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
+    @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
 }

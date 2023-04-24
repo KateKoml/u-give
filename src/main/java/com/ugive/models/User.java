@@ -1,5 +1,6 @@
 package com.ugive.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.ugive.models.enums.Gender;
@@ -20,28 +21,21 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Setter
-@Getter
-@EqualsAndHashCode(exclude = {
-        "roles", "sellers", "customers"
-})
-@ToString(exclude = {
-        "roles", "sellers", "customers"
-})
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -68,15 +62,20 @@ public class User {
     @AttributeOverride(name = "password", column = @Column(name = "user_password", nullable = false))
     private AuthenticationInfo authenticationInfo;
 
+    @JsonIgnore
     @Column(nullable = false)
     private Timestamp created = Timestamp.valueOf(LocalDateTime.now());
 
+    @JsonIgnore
     @Column(nullable = false)
     private Timestamp changed = Timestamp.valueOf(LocalDateTime.now());
 
+    @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted = false;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "users", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("users")
     private Set<Role> roles = Collections.emptySet();
@@ -85,13 +84,37 @@ public class User {
     @JsonManagedReference
     private UserBalance userBalance;
 
-    @OneToMany(mappedBy = "sellerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
     private Set<PurchaseOffer> sellers = Collections.emptySet();
 
-    @OneToMany(mappedBy = "customerId", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonManagedReference
     private Set<PurchaseOffer> customers = Collections.emptySet();
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Favourite> favourites = Collections.emptySet();
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<Message> messages = Collections.emptySet();
+
+    @OneToOne(mappedBy = "firstUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
+    @JsonManagedReference
+    private Chat chatFirst;
+
+    @OneToOne(mappedBy = "secondUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
+    @JsonManagedReference
+    private Chat chatSecond;
 
 //    public List<Role> getRoles() {
 //    List<Role> roles = new ArrayList<>();
