@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface FavouritesRepository extends
+public interface FavouriteRepository extends
         JpaRepository<Favourite, Long>,
         PagingAndSortingRepository<Favourite, Long>,
         CrudRepository<Favourite, Long> {
