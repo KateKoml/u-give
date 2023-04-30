@@ -9,5 +9,5 @@ public interface UserBalanceRepository extends
         JpaRepository<UserBalance, Long>,
         PagingAndSortingRepository<UserBalance, Long>,
         CrudRepository<UserBalance, Long> {
-
+    UserBalance findByUserId(Long id);
 }
