@@ -1,0 +1,149 @@
+.purple_button {
+    border-radius: 50px;
+    width: 200px;
+    height: 50px;
+    background-color: #7626ea;
+    color: #9aea26;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.purple_title {
+    font-weight: bold;
+    color: #7626ea;
+    text-decoration: none;
+}
+
+.purple_title_hover {
+    font-weight: bold;
+    color: #7626ea;
+    text-decoration: none;
+}
+
+.purple_title_hover:hover {
+    color: #9aea26;
+}
+
+.alphabet {
+    background-color: #e2d1fb;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 20px;
+}
+
+.letter {
+    text-align: center;
+    font-weight: bold;
+    margin: 7px;
+    width: 10%;
+    height: 13%;
+    display: inline-block;
+}
+
+.letter:hover {
+    color: #9aea26;
+}
+
+.small_img {
+    width: 200px;
+}
+
+.yellow_text {
+    color: #FFC545;
+    font-weight: bold;
+}
+
+.line {
+    width: 400px;
+    height: 36px;
+    margin-top: -20px;
+}
+
+.description > a {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.list > a {
+    display: block;
+    text-decoration: none;
+    color: #403260;
+
+}
+
+.active_text {
+    color: #CF3D3E;
+}
+
+.yellow_text {
+    color: #FFC545;
+}
+
+.cyan_title {
+    font-weight: bold;
+    text-decoration: none;
+    color: #118764;
+}
+
+.floated_left {
+    float: left;
+    margin: 20px;
+    width: 700px;
+}
+
+.floated_right {
+    float: right;
+    margin: 20px;
+
+    width: 700px;
+}
+
+p {
+    text-align: justify;
+    text-indent: 2em;
+}
+
+body {
+    background-color: #f5f0fe;
+    font-family: 'Jost', sans-serif;
+}
+
+.gray_background {
+    background-color: #f5f0fe !important;
+}
+
+
+.search {
+    border-radius: 12px;
+    background-color: #c5f383;
+}
+
+.comics-description > a {
+    display: block;
+    font-size: 18px;
+}
+
+
+.gray_alphabet {
+    background-color: #ECD6DC;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 20px;
+}
+
+.gray_alphabet > div {
+    color: #118764;
+}
+
+
+.green_alphabet {
+    background-color: #118764;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 20px;
+}
+
+.green_alphabet > div {
+    color: #ECD6DC;
+}
