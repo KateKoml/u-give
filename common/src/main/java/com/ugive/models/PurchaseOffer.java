@@ -24,6 +24,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -36,6 +37,7 @@ import java.util.Set;
 @Builder
 @Data
 @Entity
+@Cacheable("purchase_offers")
 @Table(name = "purchase_offers")
 public class PurchaseOffer {
     @Id

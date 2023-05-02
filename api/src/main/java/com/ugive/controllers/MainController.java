@@ -1,12 +1,13 @@
 package com.ugive.controllers;
 
-import ch.qos.logback.core.model.Model;
+
 import com.ugive.models.PurchaseOffer;
 import com.ugive.models.catalogs.ProductCategory;
 import com.ugive.models.catalogs.ProductCondition;
 import com.ugive.repositories.PurchaseOfferRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,13 +24,17 @@ public class MainController {
         return "start_page";
     }
 
-    /*@GetMapping("/search")
-    public List<PurchaseOffer> search(@RequestParam(name="category", required=false) ProductCategory category,
-                         @RequestParam(name="condition", required=false) ProductCondition condition,
-                         @RequestParam(name="price", required=false) BigDecimal price,
-                         Model model) {
-        List<PurchaseOffer> products = purchaseOfferRepository.findAllByProductCategoryAndProductConditionAndPrice(category, condition, price);
-
-        return products;
-    }*/
+    @GetMapping("/search")
+    public String search(@RequestParam(name="categoryName") String categoryName,
+                                      @RequestParam(name="conditionName") String conditionName,
+                                      @RequestParam(name="minPrice") BigDecimal minPrice,
+                                      @RequestParam(name="maxPrice") BigDecimal maxPrice,
+                                      Model model) {
+        if (conditionName.equals("any")) {
+            conditionName = "%";
+        }
+        List<PurchaseOffer> offers = purchaseOfferRepository.findByProductCategoryAndProductConditionAndPrice(categoryName, conditionName, minPrice, maxPrice);
+        model.addAttribute("offers", offers);
+        return "search-results";
+    }
 }

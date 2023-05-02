@@ -1,0 +1,4 @@
+[2023-05-01 20:38:42.342] - 11780 INFO [restartedMain] --- org.apache.catalina.core.StandardService: Starting service [Tomcat]
+[2023-05-01 20:38:42.349] - 11780 INFO [restartedMain] --- org.apache.catalina.core.StandardEngine: Starting Servlet engine: [Apache Tomcat/10.1.7]
+[2023-05-01 20:38:42.394] - 11780 INFO [restartedMain] --- org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]: Initializing Spring embedded WebApplicationContext
+[2023-05-01 20:38:45.558] - 11780 INFO [RMI TCP Connection(2)-192.168.0.104] --- org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/]: Initializing Spring DispatcherServlet 'dispatcherServlet'
