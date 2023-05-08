@@ -24,11 +24,11 @@
       </div>
       <div class="col-3"></div>
       <div class="col-sm mt-4">
-        <form action="http://localhost:8080/offers/search/">
-          <label>
-            <input type="text" class="w-100 search" placeholder="Search...">
-          </label>
-        </form>
+          <form th:action="@{/offers/search}" method="get">
+            <label>
+              <input type="text" name="productName" class="w-100 search" placeholder="Search...">
+            </label>
+          </form>
       </div>
       <div class="col-sm mt-4">
         <div class="dropdown">

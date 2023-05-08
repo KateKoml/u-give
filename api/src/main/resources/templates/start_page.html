@@ -25,9 +25,9 @@
         </div>
         <div class="col-3"></div>
         <div class="col-sm mt-4">
-            <form action="http://localhost:8080/offers/search/">
+            <form th:action="@{/offers/search}" method="get">
                 <label>
-                    <input type="text" class="w-100 search" placeholder="Search...">
+                    <input type="text" name="productName" class="w-100 search" placeholder="Search...">
                 </label>
             </form>
         </div>
@@ -66,11 +66,24 @@
             <label for="category">Category:</label>
             <select class="form-control" id="category" name="categoryName">
                 <option value="">Choose category</option>
-
-                <!--Как то надо достать все категории из бд-->
                 <option value="repair and construction">Repair and construction</option>
                 <option value="furniture">Furniture</option>
                 <option value="hobbies">Hobbies</option>
+                <option value="sports">Sports</option>
+                <option value="for children">For children</option>
+                <option value="women's clothes">Women's clothes</option>
+                <option value="men's clothes">Men's clothes</option>
+                <option value="animals">Animals</option>
+                <option value="electronics">Electronics</option>
+                <option value="garden">Garden</option>
+                <option value="beauty and health">Beauty and health</option>
+                <option value="phones">Phones</option>
+                <option value="computers">Computers</option>
+                <option value="household appliances">Household appliances</option>
+                <option value="tableware">Tableware</option>
+                <option value="houseplants">Houseplants</option>
+                <option value="interior items">Interior items</option>
+                <option value="other">Other</option>
             </select>
         </div>
         <div class="form-group">

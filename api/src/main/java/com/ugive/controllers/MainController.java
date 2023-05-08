@@ -2,8 +2,6 @@ package com.ugive.controllers;
 
 
 import com.ugive.models.PurchaseOffer;
-import com.ugive.models.catalogs.ProductCategory;
-import com.ugive.models.catalogs.ProductCondition;
 import com.ugive.repositories.PurchaseOfferRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
