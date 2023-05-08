@@ -108,8 +108,11 @@ body {
     background-color: #f5f0fe;
     font-family: 'Jost', sans-serif;
 }
-table{
+th {
     text-align: center;
+}
+table{
+    text-align: justify;
 }
 
 .gray_background {

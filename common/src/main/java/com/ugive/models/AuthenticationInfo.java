@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Embeddable
 public class AuthenticationInfo {
-
+    @JsonIgnore
     private String email;
     private String login;
     @JsonIgnore

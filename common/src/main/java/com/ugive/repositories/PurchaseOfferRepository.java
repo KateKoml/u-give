@@ -1,8 +1,6 @@
 package com.ugive.repositories;
 
 import com.ugive.models.PurchaseOffer;
-import com.ugive.models.catalogs.ProductCategory;
-import com.ugive.models.catalogs.ProductCondition;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +15,8 @@ public interface PurchaseOfferRepository extends
         JpaRepository<PurchaseOffer, Long>,
         PagingAndSortingRepository<PurchaseOffer, Long>,
         CrudRepository<PurchaseOffer, Long> {
-    PurchaseOffer findByProductNameStartingWith(String productName);
+    @Cacheable("purchase_offers")
+    List<PurchaseOffer> findByProductNameContainingIgnoreCase(String productName);;
 
     @Cacheable("purchase_offers")
     @Query("SELECT po FROM PurchaseOffer po JOIN po.productCategory pc JOIN po.productCondition pcn " +
