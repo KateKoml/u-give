@@ -23,8 +23,21 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(ForbiddenChangeException.class)
     public ResponseEntity<ErrorObject> handleForbiddenChangeException(ForbiddenChangeException ex, WebRequest request) {
+
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(HttpStatus.FORBIDDEN.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UserValidationException.class)
+    public ResponseEntity<ErrorObject> handleUserValidationException(UserValidationException ex, WebRequest request) {
 
         ErrorObject errorObject = new ErrorObject();
 
