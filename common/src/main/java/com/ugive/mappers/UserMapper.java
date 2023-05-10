@@ -3,6 +3,7 @@ package com.ugive.mappers;
 import com.ugive.dto.UserDto;
 import com.ugive.models.AuthenticationInfo;
 import com.ugive.models.User;
+import com.ugive.models.enums.Gender;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,9 @@ public class UserMapper {
 
     public User toEntity(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
+        if (user.getGender() == null) {
+            user.setGender(Gender.NOT_SELECTED);
+        }
         user.setAuthenticationInfo(new AuthenticationInfo(userDto.getEmail(), userDto.getLogin(), userDto.getPassword()));
         return user;
     }

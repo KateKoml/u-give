@@ -70,6 +70,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public Optional<User> setUserRole(Long userId, String roleName) {
         User user = userCheck(userId);
         Role userRole = roleRepository.findByRoleName(roleName).orElseThrow(() -> new EntityNotFoundException("This role doesn't exist"));
@@ -81,12 +82,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
     @Cacheable("users")
     public List<User> findAll(int page, int size) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size));
         return usersPage.stream().toList();
     }
 
+    @Override
     public User findOne(Long id) {
         User user = userCheck(id);
         if (Boolean.TRUE.equals(user.getIsDeleted())) {
@@ -95,6 +98,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
     public void softDelete(Long id) {
         User user = userCheck(id);
         user.setIsDeleted(true);
@@ -102,6 +106,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
     public Optional<User> resetAccount(Long id) {
         User user = userCheck(id);
         if (Boolean.TRUE.equals(user.getIsDeleted())) {

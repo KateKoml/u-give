@@ -2,6 +2,7 @@ package com.ugive.controllers;
 
 import com.ugive.dto.UserDto;
 import com.ugive.models.User;
+import com.ugive.services.UserService;
 import com.ugive.services.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<User>> findAll(
