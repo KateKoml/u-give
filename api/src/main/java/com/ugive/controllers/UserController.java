@@ -55,7 +55,7 @@ public class UserController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
         userService.softDelete(id);
-        return new ResponseEntity<>("Your account is deleted", HttpStatus.OK);
+        return new ResponseEntity<>("Your account is deleted. You can restore it within 30 days.", HttpStatus.OK);
     }
 
     @PutMapping("/{id}/reset")

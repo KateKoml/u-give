@@ -22,7 +22,7 @@ public interface PurchaseOfferRepository extends
 
     @Cacheable("purchase_offers")
     @Query("SELECT po FROM PurchaseOffer po JOIN po.productCategory pc JOIN po.productCondition pcn " +
-            "WHERE pc.categoryName LIKE %:categoryName% AND pcn.conditionName LIKE %:conditionName% " +
+            "WHERE po.isDeleted = false AND pc.categoryName LIKE %:categoryName% AND pcn.conditionName LIKE %:conditionName% " +
             "AND po.price BETWEEN :minPrice AND :maxPrice")
     List<PurchaseOffer> findByProductCategoryAndProductConditionAndPrice(@Param("categoryName") String categoryName,
                                                                          @Param("conditionName") String conditionName,

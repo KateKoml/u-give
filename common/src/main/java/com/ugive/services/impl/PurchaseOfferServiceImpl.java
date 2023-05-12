@@ -10,6 +10,7 @@ import com.ugive.services.PurchaseOfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
 
     @Override
     public List<PurchaseOfferDto> findAll(int page, int size) {
-        Page<PurchaseOffer> offersPage = offerRepository.findAll(PageRequest.of(page, size));
+        Page<PurchaseOffer> offersPage = offerRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
         return offersPage.getContent().stream()
                 .map(purchaseOfferMapper::toDto)
                 .toList();
@@ -60,8 +61,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         if (Boolean.TRUE.equals(offer.getIsDeleted())) {
             throw new ForbiddenChangeException("This offer is deleted");
         }
-        PurchaseOfferDto offerDto = purchaseOfferMapper.toDto(offer);
-        return offerDto;
+        return purchaseOfferMapper.toDto(offer);
     }
 
     @Override

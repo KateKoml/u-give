@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable("users")
     public List<User> findAll(int page, int size) {
-        Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size));
+        Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
         return usersPage.stream().toList();
     }
 
