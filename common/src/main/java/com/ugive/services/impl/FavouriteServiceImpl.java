@@ -56,11 +56,6 @@ public class FavouriteServiceImpl implements FavouriteService {
                 .toList();
     }
 
-//    public List<FavouriteDto> getUserAllFavourites(Long userId, int page, int size) {
-//        Page<Favourite> favouritePage = favouriteRepository.findByUserId(userId, PageRequest.of(page, size, Sort.by("created").descending()));
-//        return favouritePage.getContent().stream().map(favouriteMapper::toDto).toList();
-//    }
-
     @Override
     public FavouriteDto findOne(Long id) {
         Favourite favourite = favouriteCheck(id);

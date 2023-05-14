@@ -59,4 +59,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(ModifyingChatException.class)
+    public ResponseEntity<ErrorObject> handleUserValidationException(ModifyingChatException ex, WebRequest request) {
+
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject.setStatusCode(HttpStatus.FORBIDDEN.value());
+        errorObject.setMessage(ex.getMessage());
+        errorObject.setTimestamp(new Date());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
+    }
 }
