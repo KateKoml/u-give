@@ -58,7 +58,7 @@ public class UserController {
         return new ResponseEntity<>("Your account is deleted. You can restore it within 30 days.", HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/reset")
+    @PutMapping("/{id}/restore")
     public ResponseEntity<Optional<User>> resetAccount(@PathVariable("id") Long id) {
         return new ResponseEntity<>(userService.resetAccount(id), HttpStatus.OK);
     }

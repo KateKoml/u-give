@@ -5,9 +5,13 @@ import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.UserValidationException;
 import com.ugive.mappers.UserMapper;
+import com.ugive.models.PurchaseOffer;
 import com.ugive.models.Role;
 import com.ugive.models.User;
+import com.ugive.models.UserBalance;
+import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.RoleRepository;
+import com.ugive.repositories.UserBalanceRepository;
 import com.ugive.repositories.UserRepository;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,8 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PurchaseOfferRepository offerRepository;
+    private final UserBalanceRepository userBalanceRepository;
     private final UserMapper userMapper;
     private Pattern pattern;
     private Matcher matcher;
@@ -99,20 +105,42 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override
     public void softDelete(Long id) {
         User user = userCheck(id);
         user.setIsDeleted(true);
         user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         userRepository.save(user);
+
+        UserBalance userBalance = userBalanceRepository.findByUserId(id);
+        userBalance.setIsDeleted(true);
+        userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+        userBalanceRepository.save(userBalance);
+
+        List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
+        for (PurchaseOffer offer : offers) {
+            offer.setIsDeleted(true);
+            offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+            offerRepository.save(offer);
+        }
     }
 
-    @Override
     public Optional<User> resetAccount(Long id) {
         User user = userCheck(id);
+        UserBalance userBalance = userBalanceRepository.findByUserId(id);
+
         if (Boolean.TRUE.equals(user.getIsDeleted())) {
             user.setIsDeleted(false);
             user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+            userBalance.setIsDeleted(false);
+            userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+            userBalanceRepository.save(userBalance);
+
+            List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
+            for (PurchaseOffer offer : offers) {
+                offer.setIsDeleted(false);
+                offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+                offerRepository.save(offer);
+            }
         }
         return Optional.of(userRepository.save(user));
     }
@@ -122,6 +150,7 @@ public class UserServiceImpl implements UserService {
     public void deleteExpiredUsers() {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(30));
         userRepository.deleteExpiredUsers(expirationDate);
+        userBalanceRepository.deleteExpiredUserBalance(expirationDate);
     }
 
     private User userCheck(Long id) {

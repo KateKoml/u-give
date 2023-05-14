@@ -6,6 +6,8 @@ import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
+import com.ugive.repositories.UserRepository;
+import com.ugive.repositories.catalogs.OfferStatusRepository;
 import com.ugive.services.PurchaseOfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,8 @@ import java.util.Optional;
 @Service
 public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     private final PurchaseOfferRepository offerRepository;
+    private final UserRepository userRepository;
+    private final OfferStatusRepository statusRepository;
     private final PurchaseOfferMapper purchaseOfferMapper;
 
     @Override
@@ -65,9 +69,19 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     }
 
     @Override
+    public void markAsSoldOffers(Long id, Long customerId) {
+        PurchaseOffer offer = offerCheck(id);
+        offer.setOfferStatus(statusRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Wrong status")));
+        offer.setCustomer(userRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("User not found")));
+        offer.setIsDeleted(true);
+        offerRepository.save(offer);
+    }
+
+    @Override
     public void softDelete(Long id) {
         PurchaseOffer offer = offerCheck(id);
         offer.setIsDeleted(true);
+        offer.setOfferStatus(statusRepository.findById(3).orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
         offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         offerRepository.save(offer);
     }
@@ -77,6 +91,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         PurchaseOffer offer = offerCheck(id);
         if (Boolean.TRUE.equals(offer.getIsDeleted())) {
             offer.setIsDeleted(false);
+            offer.setOfferStatus(statusRepository.findById(1).orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
             offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         }
         return Optional.of(offerRepository.save(offer));

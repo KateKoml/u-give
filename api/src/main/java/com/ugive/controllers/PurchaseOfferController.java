@@ -59,7 +59,13 @@ public class PurchaseOfferController {
         Optional<PurchaseOffer> purchaseOffer = purchaseOfferService.update(id, purchaseOfferDto);
         return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
     }
-    //исправить такое для юзера в чистовике
+
+    @PutMapping("/{id}/set_as_sold")
+    public ResponseEntity<String> soldOffer(@PathVariable("id") Long id, @RequestParam Long customerId) {
+        purchaseOfferService.markAsSoldOffers(id, customerId);
+        return new ResponseEntity<>("This offer was sold out", HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deleteOffer(@PathVariable("id") Long id) {
         purchaseOfferService.softDelete(id);

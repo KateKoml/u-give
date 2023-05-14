@@ -17,6 +17,8 @@ public interface PurchaseOfferService {
 
     public PurchaseOfferDto findOne(Long id);
 
+    void markAsSoldOffers(Long id, Long customerId);
+
     void softDelete(Long id);
 
     Optional<PurchaseOffer> resetOffer(Long id);

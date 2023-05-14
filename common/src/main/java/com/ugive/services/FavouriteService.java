@@ -14,7 +14,7 @@ public interface FavouriteService {
 
     List<FavouriteDto> findAll(int page, int size);
 
-    public FavouriteDto findOne(Long id);
+    FavouriteDto findOne(Long id);
 
     void softDelete(Long id);
 
