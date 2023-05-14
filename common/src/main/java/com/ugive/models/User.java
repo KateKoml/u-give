@@ -100,7 +100,7 @@ public class User {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = false)
     @JsonManagedReference
     private Set<PurchaseOffer> customers = Collections.emptySet();
 

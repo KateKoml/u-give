@@ -57,7 +57,7 @@ public class PurchaseOffer {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     @JsonBackReference
-    private User customer = null;
+    private User customer;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

@@ -150,7 +150,6 @@ public class UserServiceImpl implements UserService {
     public void deleteExpiredUsers() {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(30));
         userRepository.deleteExpiredUsers(expirationDate);
-        userBalanceRepository.deleteExpiredUserBalance(expirationDate);
     }
 
     private User userCheck(Long id) {

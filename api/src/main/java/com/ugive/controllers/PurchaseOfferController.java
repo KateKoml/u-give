@@ -37,12 +37,6 @@ public class PurchaseOfferController {
         return new ResponseEntity<>(offers, HttpStatus.OK);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<PurchaseOfferDto>> findAll() {
-//        List<PurchaseOfferDto> offers = purchaseOfferService.findAll();
-//        return new ResponseEntity<>(offers, HttpStatus.OK);
-//    }
-
     @GetMapping("/{id}")
     public ResponseEntity<PurchaseOfferDto> getOfferById(@PathVariable Long id) {
         return ResponseEntity.ok(purchaseOfferService.findOne(id));

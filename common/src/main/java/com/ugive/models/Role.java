@@ -39,7 +39,7 @@ public class Role {
     private Integer id;
 
     @Column(name = "role_name", nullable = false)
-    private String roleName = "USER";
+    private String roleName;
 
     @JsonIgnore
     @Column(nullable = false)
