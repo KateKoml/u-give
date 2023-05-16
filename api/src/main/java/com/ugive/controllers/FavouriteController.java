@@ -56,7 +56,7 @@ public class FavouriteController {
     }
 
     @PostMapping("/favourites/create")
-    public ResponseEntity<Optional<Favourite>> createOffer(@Valid @RequestBody FavouriteDto favouriteDto) {
+    public ResponseEntity<Optional<Favourite>> createFavourite(@Valid @RequestBody FavouriteDto favouriteDto) {
         Optional<Favourite> favourite = favouriteService.create(favouriteDto);
         return new ResponseEntity<>(favourite, HttpStatus.CREATED);
     }
