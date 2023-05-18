@@ -1,21 +1,21 @@
 package com.ugive.services;
 
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PurchaseOfferService {
-    Optional<PurchaseOffer> create(PurchaseOfferDto offerDto);
+    Optional<PurchaseOffer> create(PurchaseOfferRequest offerRequest);
 
-    Optional<PurchaseOffer> update(Long id, PurchaseOfferDto offerDto);
+    Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest);
 
-    List<PurchaseOfferDto> findAll(int page, int size);
+    List<PurchaseOffer> findAll(int page, int size);
 
-    List<PurchaseOfferDto> findAll();
+    List<PurchaseOffer> findAll();
 
-    public PurchaseOfferDto findOne(Long id);
+    public PurchaseOffer findOne(Long id);
 
     void markAsSoldOffers(Long id, Long customerId);
 

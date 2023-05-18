@@ -38,12 +38,14 @@ public class UserBalanceController {
 
     @GetMapping("/balance/{id}")
     public ResponseEntity<UserBalance> getBalanceById(@PathVariable Long id) {
-        return ResponseEntity.ok(userBalanceService.findOne(id));
+        UserBalance userBalance = userBalanceService.findOne(id);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @GetMapping("{userId}/balance")
     public ResponseEntity<UserBalance> getBalanceByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(userBalanceService.getBalanceByUserId(userId));
+        UserBalance userBalance = userBalanceService.getBalanceByUserId(userId);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @PostMapping("/balance/create")

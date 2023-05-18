@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.PurchaseOfferRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
@@ -31,41 +31,32 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     private final PurchaseOfferMapper purchaseOfferMapper;
 
     @Override
-    public Optional<PurchaseOffer> create(PurchaseOfferDto offerDto) {
-        PurchaseOffer offer = purchaseOfferMapper.toEntity(offerDto);
+    public Optional<PurchaseOffer> create(PurchaseOfferRequest offerRequest) {
+        PurchaseOffer offer = purchaseOfferMapper.toEntity(offerRequest);
         return Optional.of(offerRepository.save(offer));
     }
 
     @Override
-    public Optional<PurchaseOffer> update(Long id, PurchaseOfferDto offerDto) {
+    public Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
-        if (Boolean.TRUE.equals(offer.getIsDeleted())) {
-            throw new ForbiddenChangeException("Offer is deleted");
-        }
-        purchaseOfferMapper.updateEntityFromDto(offerDto, offer);
+        purchaseOfferMapper.updateEntityFromDto(offerRequest, offer);
         return Optional.of(offerRepository.save(offer));
     }
 
     @Override
-    public List<PurchaseOfferDto> findAll(int page, int size) {
+    public List<PurchaseOffer> findAll(int page, int size) {
         Page<PurchaseOffer> offersPage = offerRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
-        return offersPage.getContent().stream()
-                .map(purchaseOfferMapper::toDto)
-                .toList();
+        return offersPage.getContent().stream().toList();
     }
 
-    public List<PurchaseOfferDto> findAll() {
+    public List<PurchaseOffer> findAll() {
         List<PurchaseOffer> offers = offerRepository.findAll();
-        return offers.stream().map(purchaseOfferMapper::toDto).toList();
+        return offers.stream().toList();
     }
 
     @Override
-    public PurchaseOfferDto findOne(Long id) {
-        PurchaseOffer offer = offerCheck(id);
-        if (Boolean.TRUE.equals(offer.getIsDeleted())) {
-            throw new ForbiddenChangeException("This offer is deleted");
-        }
-        return purchaseOfferMapper.toDto(offer);
+    public PurchaseOffer findOne(Long id) {
+        return offerCheck(id);
     }
 
     @Override
@@ -73,14 +64,14 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         PurchaseOffer offer = offerCheck(id);
         offer.setOfferStatus(statusRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Wrong status")));
         offer.setCustomer(userRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("User not found")));
-        offer.setIsDeleted(true);
+        offer.setDeleted(true);
         offerRepository.save(offer);
     }
 
     @Override
     public void softDelete(Long id) {
         PurchaseOffer offer = offerCheck(id);
-        offer.setIsDeleted(true);
+        offer.setDeleted(true);
         offer.setOfferStatus(statusRepository.findById(3).orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
         offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         offerRepository.save(offer);
@@ -89,8 +80,8 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     @Override
     public Optional<PurchaseOffer> resetOffer(Long id) {
         PurchaseOffer offer = offerCheck(id);
-        if (Boolean.TRUE.equals(offer.getIsDeleted())) {
-            offer.setIsDeleted(false);
+        if (offer.isDeleted()) {
+            offer.setDeleted(false);
             offer.setOfferStatus(statusRepository.findById(1).orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
             offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         }
@@ -105,6 +96,10 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     }
 
     private PurchaseOffer offerCheck(Long id) {
-        return offerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This offer doesn't exist or was deleted."));
+        PurchaseOffer offer = offerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This offer doesn't exist or was deleted."));
+        if (offer.isDeleted()) {
+            throw new ForbiddenChangeException("Offer is deleted");
+        }
+        return offer;
     }
 }

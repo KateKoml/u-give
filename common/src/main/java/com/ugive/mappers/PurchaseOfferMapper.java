@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.catalogs.OfferStatusRepository;
 import com.ugive.repositories.catalogs.ProductCategoryRepository;
@@ -23,63 +23,63 @@ public class PurchaseOfferMapper {
     private final ProductCategoryRepository categoryRepository;
     private final ProductConditionRepository conditionRepository;
 
-    public PurchaseOffer toEntity(PurchaseOfferDto offerDto) {
-        PurchaseOffer offer = modelMapper.map(offerDto, PurchaseOffer.class);
-        offer.setSeller(userService.findOne(offerDto.getSeller()));
-        if (offerDto.getCustomer() != null) {
-            offer.setCustomer(userService.findOne(offerDto.getCustomer()));
+    public PurchaseOffer toEntity(PurchaseOfferRequest offerRequest) {
+        PurchaseOffer offer = modelMapper.map(offerRequest, PurchaseOffer.class);
+        offer.setSeller(userService.findOne(offerRequest.getSeller()));
+        if (offerRequest.getCustomer() != null) {
+            offer.setCustomer(userService.findOne(offerRequest.getCustomer()));
         } else {
             offer.setCustomer(null);
         }
-        offer.setOfferStatus(statusRepository.findById(offerDto.getOfferStatus())
+        offer.setOfferStatus(statusRepository.findById(offerRequest.getOfferStatus())
                 .orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
-        offer.setProductCategory(categoryRepository.findById(offerDto.getProductCategory())
+        offer.setProductCategory(categoryRepository.findById(offerRequest.getProductCategory())
                 .orElseThrow(() -> new EntityNotFoundException("This category doesn't exist, try another one")));
-        offer.setProductCondition(conditionRepository.findById(offerDto.getProductCondition())
+        offer.setProductCondition(conditionRepository.findById(offerRequest.getProductCondition())
                 .orElseThrow(() -> new EntityNotFoundException("This condition doesn't exist. Try new, used or any")));
         return offer;
     }
 
-    public PurchaseOfferDto toDto(PurchaseOffer offer) {
-        PurchaseOfferDto offerDto = new PurchaseOfferDto();
-        offerDto.setSeller(offer.getSeller().getId());
-        if (offer.getCustomer() != null) {
-            offerDto.setCustomer(offer.getCustomer().getId());
-        } else {
-            offerDto.setCustomer(null);
-        }
-        offerDto.setOfferStatus(offer.getOfferStatus().getId());
-        offerDto.setProductName(offer.getProductName());
-        offerDto.setProductCategory(offer.getProductCategory().getId());
-        offerDto.setProductCondition(offer.getProductCondition().getId());
-        offerDto.setPrice(offer.getPrice());
-        return offerDto;
-    }
+//    public PurchaseOfferRequest toDto(PurchaseOffer offer) {
+//        PurchaseOfferRequest offerRequest = new PurchaseOfferRequest();
+//        offerRequest.setSeller(offer.getSeller().getId());
+//        if (offer.getCustomer() != null) {
+//            offerRequest.setCustomer(offer.getCustomer().getId());
+//        } else {
+//            offerRequest.setCustomer(null);
+//        }
+//        offerRequest.setOfferStatus(offer.getOfferStatus().getId());
+//        offerRequest.setProductName(offer.getProductName());
+//        offerRequest.setProductCategory(offer.getProductCategory().getId());
+//        offerRequest.setProductCondition(offer.getProductCondition().getId());
+//        offerRequest.setPrice(offer.getPrice());
+//        return offerRequest;
+//    }
 
-    public void updateEntityFromDto(PurchaseOfferDto offerDto, PurchaseOffer offer) {
-        if (offerDto.getSeller() != null) {
-            offer.setSeller(userService.findOne(offerDto.getSeller()));
+    public void updateEntityFromDto(PurchaseOfferRequest offerRequest, PurchaseOffer offer) {
+        if (offerRequest.getSeller() != null) {
+            offer.setSeller(userService.findOne(offerRequest.getSeller()));
         }
-        if (offerDto.getCustomer() != null) {
-            offer.setCustomer(userService.findOne(offerDto.getCustomer()));
+        if (offerRequest.getCustomer() != null) {
+            offer.setCustomer(userService.findOne(offerRequest.getCustomer()));
         }
-        if (offerDto.getOfferStatus() != null) {
-            offer.setOfferStatus(statusRepository.findById(offerDto.getOfferStatus())
+        if (offerRequest.getOfferStatus() != null) {
+            offer.setOfferStatus(statusRepository.findById(offerRequest.getOfferStatus())
                     .orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
         }
-        if (offerDto.getProductName() != null) {
-            offer.setProductName(offerDto.getProductName());
+        if (offerRequest.getProductName() != null) {
+            offer.setProductName(offerRequest.getProductName());
         }
-        if (offerDto.getProductCategory() != null) {
-            offer.setProductCategory(categoryRepository.findById(offerDto.getProductCategory())
+        if (offerRequest.getProductCategory() != null) {
+            offer.setProductCategory(categoryRepository.findById(offerRequest.getProductCategory())
                     .orElseThrow(() -> new EntityNotFoundException("This category doesn't exist, try another one")));
         }
-        if (offerDto.getProductCondition() != null) {
-            offer.setProductCondition(conditionRepository.findById(offerDto.getProductCondition())
+        if (offerRequest.getProductCondition() != null) {
+            offer.setProductCondition(conditionRepository.findById(offerRequest.getProductCondition())
                     .orElseThrow(() -> new EntityNotFoundException("This condition doesn't exist. Try new, used or any")));
         }
-        if (offerDto.getPrice() != null) {
-            offer.setPrice(offerDto.getPrice());
+        if (offerRequest.getPrice() != null) {
+            offer.setPrice(offerRequest.getPrice());
         }
         offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
     }

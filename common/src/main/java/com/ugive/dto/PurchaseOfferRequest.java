@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseOfferDto {
+public class PurchaseOfferRequest {
     private Long seller;
     private Long customer;
     private Integer offerStatus;

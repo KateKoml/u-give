@@ -36,7 +36,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findOne(id));
+        User user = userService.findOne(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping
@@ -59,14 +60,15 @@ public class UserController {
 
     @PutMapping("/{id}/restore")
     public ResponseEntity<Optional<User>> resetAccount(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(userService.resetAccount(id), HttpStatus.OK);
+        Optional<User> user = userService.resetAccount(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/set_role")
     public ResponseEntity<User> setUserRole(@PathVariable Long userId, @RequestParam String roleName) {
         Optional<User> user = userService.setUserRole(userId, roleName);
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            return  new ResponseEntity<>(user.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
