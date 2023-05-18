@@ -1,24 +1,24 @@
 package com.ugive.services;
 
-import com.ugive.dto.FavouriteDto;
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.FavouriteRequest;
 import com.ugive.models.Favourite;
+import com.ugive.models.PurchaseOffer;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface FavouriteService {
-    Optional<Favourite> create(FavouriteDto favouriteDto);
+    Optional<Favourite> create(FavouriteRequest favouriteRequest);
 
-    Optional<Favourite> update(Long id, FavouriteDto favouriteDto);
+    Optional<Favourite> update(Long id, FavouriteRequest favouriteRequest);
 
-    List<FavouriteDto> findAll(int page, int size);
+    List<Favourite> findAll(int page, int size);
 
-    FavouriteDto findOne(Long id);
+    Favourite findOne(Long id);
 
     void softDelete(Long id);
 
-    List<PurchaseOfferDto> getFavoritePurchaseOffersForUser(Long userId, int page, int size);
+    List<PurchaseOffer> getFavouritePurchaseOffersForUser(Long userId, int page, int size);
 
-    PurchaseOfferDto getPurchaseOfferByFavouriteId(Long userId, Long favouriteId);
+    PurchaseOffer getPurchaseOfferByFavouriteId(Long userId, Long favouriteId);
 }

@@ -77,10 +77,10 @@ public class PurchaseOfferController {
     }
 
     @GetMapping("/search_by_criteria")
-    public ResponseEntity<List<PurchaseOffer>> search(@RequestParam(name="categoryName") String categoryName,
-                         @RequestParam(name="conditionName") String conditionName,
-                         @RequestParam(name="minPrice") BigDecimal minPrice,
-                         @RequestParam(name="maxPrice") BigDecimal maxPrice) {
+    public ResponseEntity<List<PurchaseOffer>> search(@RequestParam(name = "categoryName") String categoryName,
+                                                      @RequestParam(name = "conditionName") String conditionName,
+                                                      @RequestParam(name = "minPrice") BigDecimal minPrice,
+                                                      @RequestParam(name = "maxPrice") BigDecimal maxPrice) {
         if (conditionName.equals("any")) {
             conditionName = "%";
         }

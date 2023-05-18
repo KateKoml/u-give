@@ -28,15 +28,6 @@ public class PaymentMapper {
         return payment;
     }
 
-//    public PaymentRequest toDto(Payment payment) {
-//        Long offerId = payment.getOffer().getId();
-//        Integer typeId = payment.getPaymentType().getId();
-//        PaymentRequest paymentRequest = modelMapper.map(payment, PaymentRequest.class);
-//        paymentRequest.setOfferToPay(offerId);
-//        paymentRequest.setTypeOfPayment(typeId);
-//        return paymentRequest;
-//    }
-
     public void updateEntityFromRequest(PaymentRequest paymentRequest, Payment payment) {
         if (paymentRequest.getOfferToPay() != null) {
             payment.setOffer(offerRepository.findById(paymentRequest.getOfferToPay()).orElseThrow(

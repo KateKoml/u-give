@@ -2,7 +2,6 @@ package com.ugive.controllers;
 
 import com.ugive.dto.UserBalanceRequest;
 import com.ugive.models.UserBalance;
-import com.ugive.repositories.UserBalanceRepository;
 import com.ugive.services.UserBalanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -68,8 +67,8 @@ public class UserBalanceController {
 
     @PutMapping("/balance/{id}/send")
     public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long idFirstUser,
-                                                            @RequestParam Long idSecondUser,
-                                                            @RequestParam BigDecimal newMoney) {
+                                                         @RequestParam Long idSecondUser,
+                                                         @RequestParam BigDecimal newMoney) {
         UserBalance userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }

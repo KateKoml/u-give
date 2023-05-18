@@ -68,7 +68,7 @@ public class UserController {
     public ResponseEntity<User> setUserRole(@PathVariable Long userId, @RequestParam String roleName) {
         Optional<User> user = userService.setUserRole(userId, roleName);
         if (user.isPresent()) {
-            return  new ResponseEntity<>(user.get(), HttpStatus.OK);
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }

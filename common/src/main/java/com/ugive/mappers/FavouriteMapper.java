@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.FavouriteDto;
+import com.ugive.dto.FavouriteRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
@@ -19,31 +19,24 @@ public class FavouriteMapper {
     private final UserService userService;
     private final PurchaseOfferRepository offerRepository;
 
-    public Favourite toEntity(FavouriteDto favouriteDto) {
-        Favourite favourite = modelMapper.map(favouriteDto, Favourite.class);
-        favourite.setUser(userService.findOne(favouriteDto.getUser()));
-        Optional<PurchaseOffer> offer = offerRepository.findById(favouriteDto.getPurchaseOffer());
-        if (Boolean.TRUE.equals(offer.get().getIsDeleted())) {
+    public Favourite toEntity(FavouriteRequest favouriteRequest) {
+        Favourite favourite = modelMapper.map(favouriteRequest, Favourite.class);
+        favourite.setUser(userService.findOne(favouriteRequest.getUser()));
+        Optional<PurchaseOffer> offer = offerRepository.findById(favouriteRequest.getPurchaseOffer());
+        if (offer.get().isDeleted()) {
             throw new EntityNotFoundException("This offer doesn't exist or was deleted");
         }
         favourite.setPurchaseOffer(offer.orElseThrow(() -> new EntityNotFoundException("This offer doesn't exist")));
         return favourite;
     }
 
-    public FavouriteDto toDto(Favourite favourite) {
-        FavouriteDto favouriteDto = new FavouriteDto();
-        favouriteDto.setUser(favourite.getUser().getId());
-        favouriteDto.setPurchaseOffer(favourite.getPurchaseOffer().getId());
-        return favouriteDto;
-    }
-
-    public void updateEntityFromDto(FavouriteDto favouriteDto, Favourite favourite) {
-        if (favouriteDto.getUser() != null) {
-            favourite.setUser(userService.findOne(favouriteDto.getUser()));
+    public void updateEntityFromRequest(FavouriteRequest favouriteRequest, Favourite favourite) {
+        if (favouriteRequest.getUser() != null) {
+            favourite.setUser(userService.findOne(favouriteRequest.getUser()));
         }
-        if (favouriteDto.getPurchaseOffer() != null) {
-            Optional<PurchaseOffer> offer = offerRepository.findById(favouriteDto.getPurchaseOffer());
-            if (Boolean.TRUE.equals(offer.get().getIsDeleted())) {
+        if (favouriteRequest.getPurchaseOffer() != null) {
+            Optional<PurchaseOffer> offer = offerRepository.findById(favouriteRequest.getPurchaseOffer());
+            if (offer.get().isDeleted()) {
                 throw new EntityNotFoundException("This offer doesn't exist or was deleted");
             }
             favourite.setPurchaseOffer(offer.orElseThrow(() -> new EntityNotFoundException("This offer doesn't exist")));

@@ -1,8 +1,8 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.FavouriteDto;
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.FavouriteRequest;
 import com.ugive.models.Favourite;
+import com.ugive.models.PurchaseOffer;
 import com.ugive.services.FavouriteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,46 +28,47 @@ public class FavouriteController {
     private final FavouriteService favouriteService;
 
     @GetMapping("/favourites")
-    public ResponseEntity<List<FavouriteDto>> findAll(
+    public ResponseEntity<List<Favourite>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<FavouriteDto> favourites = favouriteService.findAll(page, size);
+        List<Favourite> favourites = favouriteService.findAll(page, size);
         return new ResponseEntity<>(favourites, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/favourites/{favouriteId}")
-    public ResponseEntity<PurchaseOfferDto> getPurchaseOfferByFavouriteId(@PathVariable Long userId, @PathVariable Long favouriteId) {
-        PurchaseOfferDto purchaseOfferDto = favouriteService.getPurchaseOfferByFavouriteId(userId, favouriteId);
-        return ResponseEntity.ok(purchaseOfferDto);
+    public ResponseEntity<PurchaseOffer> getPurchaseOfferByFavouriteId(@PathVariable Long userId, @PathVariable Long favouriteId) {
+        PurchaseOffer purchaseOffer = favouriteService.getPurchaseOfferByFavouriteId(userId, favouriteId);
+        return new ResponseEntity<>(purchaseOffer, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/favourites")
-    public ResponseEntity<List<PurchaseOfferDto>> getUserFavouritePurchaseOffers(
+    public ResponseEntity<List<PurchaseOffer>> getUserFavouritePurchaseOffers(
             @PathVariable Long userId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<PurchaseOfferDto> favouritePurchaseOffers = favouriteService.getFavoritePurchaseOffersForUser(userId, page, size);
-        return ResponseEntity.ok(favouritePurchaseOffers);
+        List<PurchaseOffer> favouritePurchaseOffers = favouriteService.getFavouritePurchaseOffersForUser(userId, page, size);
+        return new ResponseEntity<>(favouritePurchaseOffers, HttpStatus.OK);
     }
 
     @GetMapping("/favourites/{id}")
-    public ResponseEntity<FavouriteDto> getFavouriteById(@PathVariable Long id) {
-        return ResponseEntity.ok(favouriteService.findOne(id));
+    public ResponseEntity<Favourite> getFavouriteById(@PathVariable Long id) {
+        Favourite favourite = favouriteService.findOne(id);
+        return new ResponseEntity<>(favourite, HttpStatus.OK);
     }
 
-    @PostMapping("/favourites/create")
-    public ResponseEntity<Optional<Favourite>> createFavourite(@Valid @RequestBody FavouriteDto favouriteDto) {
-        Optional<Favourite> favourite = favouriteService.create(favouriteDto);
+    @PostMapping("/favourites")
+    public ResponseEntity<Optional<Favourite>> createFavourite(@Valid @RequestBody FavouriteRequest favouriteRequest) {
+        Optional<Favourite> favourite = favouriteService.create(favouriteRequest);
         return new ResponseEntity<>(favourite, HttpStatus.CREATED);
     }
 
     @PutMapping("/favourites/{id}/update")
-    public ResponseEntity<Optional<Favourite>> updateOffer(@PathVariable("id") Long id, @RequestBody FavouriteDto favouriteDto) {
-        Optional<Favourite> favourite = favouriteService.update(id, favouriteDto);
+    public ResponseEntity<Optional<Favourite>> updateOffer(@PathVariable("id") Long id, @RequestBody FavouriteRequest favouriteRequest) {
+        Optional<Favourite> favourite = favouriteService.update(id, favouriteRequest);
         return new ResponseEntity<>(favourite, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/favourites/{id}/delete")
+    @DeleteMapping("/favourites/{id}")
     public ResponseEntity<String> deleteFavourite(@PathVariable("id") Long id) {
         favouriteService.softDelete(id);
         return new ResponseEntity<>("This offer is deleted from your Favourites.", HttpStatus.OK);

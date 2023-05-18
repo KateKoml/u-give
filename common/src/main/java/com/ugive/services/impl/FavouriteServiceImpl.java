@@ -1,12 +1,11 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.FavouriteDto;
-import com.ugive.dto.PurchaseOfferDto;
+import com.ugive.dto.FavouriteRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.FavouriteMapper;
-import com.ugive.mappers.PurchaseOfferMapper;
 import com.ugive.models.Favourite;
+import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.FavouriteRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.services.FavouriteService;
@@ -30,45 +29,39 @@ public class FavouriteServiceImpl implements FavouriteService {
     private final FavouriteRepository favouriteRepository;
     private final PurchaseOfferRepository purchaseOfferRepository;
     private final FavouriteMapper favouriteMapper;
-    private final PurchaseOfferMapper offerMapper;
 
     @Override
-    public Optional<Favourite> create(FavouriteDto favouriteDto) {
-        Favourite favourite = favouriteMapper.toEntity(favouriteDto);
+    public Optional<Favourite> create(FavouriteRequest favouriteRequest) {
+        Favourite favourite = favouriteMapper.toEntity(favouriteRequest);
         return Optional.of(favouriteRepository.save(favourite));
     }
 
     @Override
-    public Optional<Favourite> update(Long id, FavouriteDto favouriteDto) {
+    public Optional<Favourite> update(Long id, FavouriteRequest favouriteRequest) {
         Favourite favourite = favouriteCheck(id);
-        if (Boolean.TRUE.equals(favourite.getIsDeleted())) {
+        if (favourite.isDeleted()) {
             throw new ForbiddenChangeException("Offer is deleted from Favourites");
         }
-        favouriteMapper.updateEntityFromDto(favouriteDto, favourite);
+        favouriteMapper.updateEntityFromRequest(favouriteRequest, favourite);
         return Optional.of(favouriteRepository.save(favourite));
     }
 
     @Override
-    public List<FavouriteDto> findAll(int page, int size) {
+    public List<Favourite> findAll(int page, int size) {
         Page<Favourite> favouritePage = favouriteRepository.findAll(PageRequest.of(page, size, Sort.by("created").descending()));
         return favouritePage.getContent().stream()
-                .map(favouriteMapper::toDto)
                 .toList();
     }
 
     @Override
-    public FavouriteDto findOne(Long id) {
-        Favourite favourite = favouriteCheck(id);
-        if (Boolean.TRUE.equals(favourite.getIsDeleted())) {
-            throw new ForbiddenChangeException("Offer is deleted from Favourites");
-        }
-        return favouriteMapper.toDto(favourite);
+    public Favourite findOne(Long id) {
+        return favouriteCheck(id);
     }
 
     @Override
     public void softDelete(Long id) {
         Favourite favourite = favouriteCheck(id);
-        favourite.setIsDeleted(true);
+        favourite.setDeleted(true);
         favourite.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         favouriteRepository.save(favourite);
     }
@@ -81,24 +74,28 @@ public class FavouriteServiceImpl implements FavouriteService {
     }
 
     @Override
-    public List<PurchaseOfferDto> getFavoritePurchaseOffersForUser(Long userId, int page, int size) {
+    public List<PurchaseOffer> getFavouritePurchaseOffersForUser(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("created").descending());
         Page<Favourite> userFavorites = favouriteRepository.findAllByUserId(userId, pageable);
 
         return userFavorites.getContent().stream()
-                .map(favorite -> offerMapper.toDto(purchaseOfferRepository.findById(favorite.getPurchaseOffer().getId())
+                .map(favorite -> (purchaseOfferRepository.findById(favorite.getPurchaseOffer().getId())
                         .orElseThrow(() -> new EntityNotFoundException("Purchase Offer not found with id " + favorite.getPurchaseOffer()))))
                 .toList();
     }
 
     @Override
-    public PurchaseOfferDto getPurchaseOfferByFavouriteId(Long userId, Long favouriteId) {
+    public PurchaseOffer getPurchaseOfferByFavouriteId(Long userId, Long favouriteId) {
         Favourite favourite = favouriteRepository.findByIdAndUserId(favouriteId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Favourite not found with id " + favouriteId));
-        return offerMapper.toDto(favourite.getPurchaseOffer());
+        return favourite.getPurchaseOffer();
     }
 
     private Favourite favouriteCheck(Long id) {
-        return favouriteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This offer not in your Favourites."));
+        Favourite favourite = favouriteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This offer not in your Favourites."));
+        if (favourite.isDeleted()) {
+            throw new ForbiddenChangeException("Offer is deleted from Favourites");
+        }
+        return favourite;
     }
 }

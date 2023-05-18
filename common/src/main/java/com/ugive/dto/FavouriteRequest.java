@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FavouriteDto {
+public class FavouriteRequest {
     private Long user;
     private Long purchaseOffer;
 }
