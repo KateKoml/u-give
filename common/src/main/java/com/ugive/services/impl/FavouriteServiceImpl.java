@@ -87,7 +87,7 @@ public class FavouriteServiceImpl implements FavouriteService {
     @Override
     public PurchaseOffer getPurchaseOfferByFavouriteId(Long userId, Long favouriteId) {
         Favourite favourite = favouriteRepository.findByIdAndUserId(favouriteId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("Favourite not found with id " + favouriteId));
+                .orElseThrow(() -> new EntityNotFoundException("User " + userId + " with favourite " + favouriteId + " not found."));
         return favourite.getPurchaseOffer();
     }
 
