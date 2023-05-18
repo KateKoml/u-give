@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.MessageDto;
+import com.ugive.dto.MessageRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.MessageMapper;
@@ -31,7 +31,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper messageMapper;
 
     @Override
-    public Optional<Message> create(MessageDto messageDto) {
+    public Optional<Message> create(MessageRequest messageDto) {
         Message message = messageMapper.toEntity(messageDto);
         Chat chat = chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found."));
 
@@ -43,54 +43,53 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Optional<Message> update(Long id, MessageDto messageDto) {
+    public Optional<Message> update(Long id, MessageRequest messageDto) {
         Message message = messageCheck(id);
-        messageMapper.updateEntityFromDto(messageDto, message);
+        messageMapper.updateEntityFromRequest(messageDto, message);
         return Optional.of(messageRepository.save(message));
     }
 
     @Override
-    public List<MessageDto> findAll(int page, int size) {
+    public List<Message> findAll(int page, int size) {
         Page<Message> messagesPage = messageRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
         return messagesPage.getContent().stream()
-                .filter(message -> !message.getIsDeleted())
-                .map(messageMapper::toDto)
+                .filter(message -> !message.isDeleted())
                 .toList();
     }
 
     @Override
-    public List<MessageDto> findAll() {
+    public List<Message> findAll() {
         List<Message> messages = messageRepository.findAll();
         return messages.stream()
-                .filter(message -> !message.getIsDeleted())
-                .map(messageMapper::toDto).toList();
+                .filter(message -> !message.isDeleted())
+                .toList();
     }
 
     @Override
-    public List<MessageDto> findAllForOneUser(Long userId) {
+    public List<Message> findAllForOneUser(Long userId) {
         List<Message> messages = messageRepository.findAllByUserId(userId);
         return messages.stream()
-                .filter(message -> !message.getIsDeleted())
+                .filter(message -> !message.isDeleted())
                 .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .map(messageMapper::toDto).toList();
+                .toList();
     }
 
     @Override
-    public List<MessageDto> showAllMessagesInChat(Long chatId) {
+    public List<Message> showAllMessagesInChat(Long chatId) {
         List<Message> messages = messageRepository.findAllByChatId(chatId);
         return messages.stream()
-                .filter(message -> !message.getIsDeleted())
+                .filter(message -> !message.isDeleted())
                 .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .map(messageMapper::toDto).toList();
+                .toList();
     }
 
     @Override
-    public List<MessageDto> searchMessagesInChat(Long chatId, String textPart) {
+    public List<Message> searchMessagesInChat(Long chatId, String textPart) {
         List<Message> messages = messageRepository.findByChatIdAndTextContainingIgnoreCase(chatId, textPart);
         return messages.stream()
-                .filter(message -> !message.getIsDeleted())
+                .filter(message -> !message.isDeleted())
                 .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .map(messageMapper::toDto).toList();
+                .toList();
     }
 
     @Override
@@ -101,15 +100,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public MessageDto findOne(Long id) {
-        Message message = messageCheck(id);
-        return messageMapper.toDto(message);
+    public Message findOne(Long id) {
+        return messageCheck(id);
     }
 
     @Override
     public void softDelete(Long id) {
         Message message = messageCheck(id);
-        message.setIsDeleted(true);
+        message.setDeleted(true);
         message.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         messageRepository.save(message);
     }
@@ -122,9 +120,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private Message messageCheck(Long id) {
-        //return messageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This message doesn't exist or was deleted."));
         Message message = messageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This message doesn't exist or was deleted."));
-        if (Boolean.TRUE.equals(message.getIsDeleted())) {
+        if (message.isDeleted()) {
             throw new EntityNotFoundException("This message was deleted.");
         }
         return message;

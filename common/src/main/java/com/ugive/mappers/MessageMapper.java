@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.MessageDto;
+import com.ugive.dto.MessageRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Message;
 import com.ugive.repositories.ChatRepository;
@@ -19,29 +19,22 @@ public class MessageMapper {
     private final UserService userService;
     private final ChatRepository chatRepository;
 
-    public Message toEntity(MessageDto messageDto) {
-        Message message = modelMapper.map(messageDto, Message.class);
-        message.setChat(chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found.")));
-        message.setUser(userService.findOne(messageDto.getSender()));
+    public Message toEntity(MessageRequest messageRequest) {
+        Message message = modelMapper.map(messageRequest, Message.class);
+        message.setChat(chatRepository.findById(messageRequest.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found.")));
+        message.setUser(userService.findOne(messageRequest.getSender()));
         return message;
     }
 
-    public MessageDto toDto(Message message) {
-        MessageDto messageDto = modelMapper.map(message, MessageDto.class);
-        messageDto.setPrivateChat(message.getChat().getId());
-        messageDto.setSender(message.getUser().getId());
-        return messageDto;
-    }
-
-    public void updateEntityFromDto(MessageDto messageDto, Message message) {
-        if (messageDto.getPrivateChat() != null) {
-            message.setChat(chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found.")));
+    public void updateEntityFromRequest(MessageRequest messageRequest, Message message) {
+        if (messageRequest.getPrivateChat() != null) {
+            message.setChat(chatRepository.findById(messageRequest.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found.")));
         }
-        if (messageDto.getSender() != null) {
-            message.setUser(userService.findOne(messageDto.getSender()));
+        if (messageRequest.getSender() != null) {
+            message.setUser(userService.findOne(messageRequest.getSender()));
         }
-        if (messageDto.getText() != null) {
-            message.setText(messageDto.getText());
+        if (messageRequest.getText() != null) {
+            message.setText(messageRequest.getText());
         }
         message.setChanged(Timestamp.valueOf(LocalDateTime.now()));
     }
