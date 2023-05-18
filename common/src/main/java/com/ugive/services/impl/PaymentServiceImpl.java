@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.PaymentDto;
+import com.ugive.dto.PaymentRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.mappers.PaymentMapper;
 import com.ugive.models.Payment;
@@ -8,13 +8,11 @@ import com.ugive.models.PurchaseOffer;
 import com.ugive.models.catalogs.PaymentType;
 import com.ugive.repositories.PaymentRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
-import com.ugive.repositories.catalogs.OfferStatusRepository;
 import com.ugive.repositories.catalogs.PaymentTypeRepository;
 import com.ugive.services.PaymentService;
 import com.ugive.services.PurchaseOfferService;
 import com.ugive.services.UserBalanceService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,57 +30,54 @@ import java.util.Optional;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PurchaseOfferRepository offerRepository;
-    private final OfferStatusRepository statusRepository;
     private final PurchaseOfferService offerService;
     private final PaymentTypeRepository typeRepository;
     private final UserBalanceService userBalanceService;
     private final PaymentMapper paymentMapper;
 
     @Override
-    public Optional<Payment> create(PaymentDto paymentDto) {
+    public Optional<Payment> create(PaymentRequest paymentDto) {
         Payment payment = paymentMapper.toEntity(paymentDto);
         return Optional.of(paymentRepository.save(payment));
     }
 
     @Override
-    public Optional<Payment> update(Long id, PaymentDto paymentDto) {
+    public Optional<Payment> update(Long id, PaymentRequest paymentDto) {
         Payment payment = paymentCheck(id);
-        paymentMapper.updateEntityFromDto(paymentDto, payment);
+        paymentMapper.updateEntityFromRequest(paymentDto, payment);
         return Optional.of(paymentRepository.save(payment));
     }
 
     @Override
-    public List<PaymentDto> findAll(int page, int size) {
+    public List<Payment> findAll(int page, int size) {
         Page<Payment> paymentsPage = paymentRepository.findAll(PageRequest.of(page, size, Sort.by("created").descending()));
         return paymentsPage.getContent().stream()
-                .filter(payment -> !payment.getIsDeleted())
-                .map(paymentMapper::toDto)
+                .filter(payment -> !payment.isDeleted())
                 .toList();
     }
 
     @Override
-    public List<PaymentDto> findAllForOneUser(Long userId) {
+    public List<Payment> findAllForOneUser(Long userId) {
         List<Payment> payments = paymentRepository.findByOfferCustomerId(userId);
         return payments.stream()
-                .filter(payment -> !payment.getIsDeleted())
-                .sorted(Comparator.comparing(Payment::getCreated).reversed())
-                .map(paymentMapper::toDto).toList();
+                .filter(payment -> !payment.isDeleted())
+                .sorted(Comparator.comparing(Payment::getCreated).reversed()).toList();
     }
 
     @Override
-    public PaymentDto findOne(Long id) {
-        Payment payment = paymentCheck(id);
-        return paymentMapper.toDto(payment);
+    public Payment findOne(Long id) {
+        return paymentCheck(id);
     }
 
     @Override
     @Transactional
-    public Optional<Payment> makePayment (Long purchaseOfferId, String type, Long customerId) {
+    public Optional<Payment> makePayment(Long purchaseOfferId, String type, Long customerId) {
         PurchaseOffer offer = offerRepository.findById(purchaseOfferId).orElseThrow(() -> new EntityNotFoundException("Offer not found"));
         PaymentType paymentType = typeRepository.findByType(type).orElseThrow(() -> new EntityNotFoundException("This type not available"));
-        PaymentDto paymentDto = new PaymentDto(purchaseOfferId, paymentType.getId());
+        PaymentRequest paymentDto = new PaymentRequest(purchaseOfferId, paymentType.getId());
 
-        if(paymentType.getId() == 3) {
+        // 3 = digital wallet
+        if (paymentType.getId() == 3) {
             userBalanceService.sendMoney(customerId, offer.getSeller().getId(), offer.getPrice());
             offerService.markAsSoldOffers(purchaseOfferId, customerId);
         }
@@ -93,14 +88,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void markAsDeleted(Long id) {
         Payment payment = paymentCheck(id);
-        payment.setIsDeleted(true);
+        payment.setDeleted(true);
         payment.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         paymentRepository.save(payment);
     }
 
     private Payment paymentCheck(Long id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This payment doesn't exist or was deleted."));
-        if (Boolean.TRUE.equals(payment.getIsDeleted())) {
+        if (payment.isDeleted()) {
             throw new EntityNotFoundException("This message was deleted.");
         }
         return payment;

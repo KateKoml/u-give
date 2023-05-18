@@ -39,7 +39,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     @Override
     public Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
-        purchaseOfferMapper.updateEntityFromDto(offerRequest, offer);
+        purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
         return Optional.of(offerRepository.save(offer));
     }
 

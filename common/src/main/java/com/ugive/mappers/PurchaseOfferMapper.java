@@ -40,23 +40,7 @@ public class PurchaseOfferMapper {
         return offer;
     }
 
-//    public PurchaseOfferRequest toDto(PurchaseOffer offer) {
-//        PurchaseOfferRequest offerRequest = new PurchaseOfferRequest();
-//        offerRequest.setSeller(offer.getSeller().getId());
-//        if (offer.getCustomer() != null) {
-//            offerRequest.setCustomer(offer.getCustomer().getId());
-//        } else {
-//            offerRequest.setCustomer(null);
-//        }
-//        offerRequest.setOfferStatus(offer.getOfferStatus().getId());
-//        offerRequest.setProductName(offer.getProductName());
-//        offerRequest.setProductCategory(offer.getProductCategory().getId());
-//        offerRequest.setProductCondition(offer.getProductCondition().getId());
-//        offerRequest.setPrice(offer.getPrice());
-//        return offerRequest;
-//    }
-
-    public void updateEntityFromDto(PurchaseOfferRequest offerRequest, PurchaseOffer offer) {
+    public void updateEntityFromRequest(PurchaseOfferRequest offerRequest, PurchaseOffer offer) {
         if (offerRequest.getSeller() != null) {
             offer.setSeller(userService.findOne(offerRequest.getSeller()));
         }

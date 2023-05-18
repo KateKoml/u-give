@@ -37,7 +37,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Override
     public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceDto) {
         UserBalance userBalance = findOne(id);
-        userBalanceMapper.updateEntityFromDto(userBalanceDto, userBalance);
+        userBalanceMapper.updateEntityFromRequest(userBalanceDto, userBalance);
         return Optional.of(userBalanceRepository.save(userBalance));
     }
 
@@ -100,7 +100,6 @@ public class UserBalanceServiceImpl implements UserBalanceService {
         BigDecimal newBalance = currentBalance.subtract(price);
         firstUserBalance.setBalance(newBalance.setScale(2, RoundingMode.UNNECESSARY));
         firstUserBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-
 
         BigDecimal secondUserNewBalance = secondUser.add(price);
         secondUserBalance.setBalance(secondUserNewBalance.setScale(2, RoundingMode.UNNECESSARY));

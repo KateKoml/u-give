@@ -19,7 +19,7 @@ public class UserBalanceMapper {
         return userBalance;
     }
 
-    public void updateEntityFromDto(UserBalanceRequest userBalanceRequest, UserBalance userBalance) {
+    public void updateEntityFromRequest(UserBalanceRequest userBalanceRequest, UserBalance userBalance) {
         if (userBalanceRequest.getPerson() != null) {
             userBalance.setUser(userService.findOne(userBalanceRequest.getPerson()));
         }

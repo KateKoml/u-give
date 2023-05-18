@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.PaymentDto;
+import com.ugive.dto.PaymentRequest;
 import com.ugive.models.Payment;
 import com.ugive.repositories.PaymentRepository;
 import com.ugive.services.PaymentService;
@@ -28,25 +28,27 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping
-    public ResponseEntity<List<PaymentDto>> findAll(
+    public ResponseEntity<List<Payment>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<PaymentDto> payments = paymentService.findAll(page, size);
+        List<Payment> payments = paymentService.findAll(page, size);
         return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<PaymentDto> getPaymentById(@PathVariable Long id) {
-        return ResponseEntity.ok(paymentService.findOne(id));
+    @GetMapping("/{id}")
+    public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
+        Payment payment = paymentService.findOne(id);
+        return new ResponseEntity<>(payment, HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<List<PaymentDto>> getAllUserPayments(@PathVariable Long userId) {
-        return ResponseEntity.ok(paymentService.findAllForOneUser(userId));
+    public ResponseEntity<List<Payment>> getAllUserPayments(@PathVariable Long userId) {
+        List<Payment> payments = paymentService.findAllForOneUser(userId);
+        return new ResponseEntity<>(payments, HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Optional<Payment>> createPayment(@Valid @RequestBody PaymentDto paymentDto) {
+    @PostMapping
+    public ResponseEntity<Optional<Payment>> createPayment(@Valid @RequestBody PaymentRequest paymentDto) {
         Optional<Payment> payment = paymentService.create(paymentDto);
         return new ResponseEntity<>(payment, HttpStatus.CREATED);
     }
@@ -60,7 +62,7 @@ public class PaymentController {
     }
 
     @PutMapping("{id}/update")
-    public ResponseEntity<Optional<Payment>> updatePayment(@PathVariable("id") Long id, @RequestBody PaymentDto paymentDto) {
+    public ResponseEntity<Optional<Payment>> updatePayment(@PathVariable("id") Long id, @RequestBody PaymentRequest paymentDto) {
         Optional<Payment> payment = paymentService.update(id, paymentDto);
         return new ResponseEntity<>(payment, HttpStatus.CREATED);
     }

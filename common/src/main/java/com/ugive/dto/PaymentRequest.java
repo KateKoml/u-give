@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentDto {
+public class PaymentRequest {
     private Long offerToPay;
     private Integer typeOfPayment;
 }

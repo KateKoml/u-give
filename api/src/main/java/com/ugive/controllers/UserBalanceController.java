@@ -42,13 +42,13 @@ public class UserBalanceController {
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @GetMapping("{userId}/balance")
+    @GetMapping("/{userId}/balance")
     public ResponseEntity<UserBalance> getBalanceByUserId(@PathVariable Long userId) {
         UserBalance userBalance = userBalanceService.getBalanceByUserId(userId);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @PostMapping("/balance/create")
+    @PostMapping("/balance")
     public ResponseEntity<Optional<UserBalance>> createUserBalance(@Valid @RequestBody UserBalanceRequest userBalanceRequest) {
         Optional<UserBalance> userBalance = userBalanceService.create(userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);

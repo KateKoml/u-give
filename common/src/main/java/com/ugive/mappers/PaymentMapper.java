@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.PaymentDto;
+import com.ugive.dto.PaymentRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Payment;
 import com.ugive.repositories.PurchaseOfferRepository;
@@ -19,31 +19,31 @@ public class PaymentMapper {
     private final PurchaseOfferRepository offerRepository;
     private final PaymentTypeRepository typeRepository;
 
-    public Payment toEntity(PaymentDto paymentDto) {
-        Payment payment = modelMapper.map(paymentDto, Payment.class);
-        payment.setOffer(offerRepository.findById(paymentDto.getOfferToPay()).orElseThrow(
+    public Payment toEntity(PaymentRequest paymentRequest) {
+        Payment payment = modelMapper.map(paymentRequest, Payment.class);
+        payment.setOffer(offerRepository.findById(paymentRequest.getOfferToPay()).orElseThrow(
                 () -> new EntityNotFoundException("Offer not found.")));
-        payment.setPaymentType(typeRepository.findById(paymentDto.getTypeOfPayment()).orElseThrow(
+        payment.setPaymentType(typeRepository.findById(paymentRequest.getTypeOfPayment()).orElseThrow(
                 () -> new EntityNotFoundException("This type doesn't exist. You can pay by card, cash, digital wallet, mobile phone.")));
         return payment;
     }
 
-    public PaymentDto toDto(Payment payment) {
-        Long offerId = payment.getOffer().getId();
-        Integer typeId = payment.getPaymentType().getId();
-        PaymentDto paymentDto = modelMapper.map(payment, PaymentDto.class);
-        paymentDto.setOfferToPay(offerId);
-        paymentDto.setTypeOfPayment(typeId);
-        return paymentDto;
-    }
+//    public PaymentRequest toDto(Payment payment) {
+//        Long offerId = payment.getOffer().getId();
+//        Integer typeId = payment.getPaymentType().getId();
+//        PaymentRequest paymentRequest = modelMapper.map(payment, PaymentRequest.class);
+//        paymentRequest.setOfferToPay(offerId);
+//        paymentRequest.setTypeOfPayment(typeId);
+//        return paymentRequest;
+//    }
 
-    public void updateEntityFromDto(PaymentDto paymentDto, Payment payment) {
-        if (paymentDto.getOfferToPay() != null) {
-            payment.setOffer(offerRepository.findById(paymentDto.getOfferToPay()).orElseThrow(
+    public void updateEntityFromRequest(PaymentRequest paymentRequest, Payment payment) {
+        if (paymentRequest.getOfferToPay() != null) {
+            payment.setOffer(offerRepository.findById(paymentRequest.getOfferToPay()).orElseThrow(
                     () -> new EntityNotFoundException("Offer not found.")));
         }
-        if (paymentDto.getTypeOfPayment() != null) {
-            payment.setPaymentType(typeRepository.findById(paymentDto.getTypeOfPayment()).orElseThrow(
+        if (paymentRequest.getTypeOfPayment() != null) {
+            payment.setPaymentType(typeRepository.findById(paymentRequest.getTypeOfPayment()).orElseThrow(
                     () -> new EntityNotFoundException("This type doesn't exist. You can pay by card, cash, digital wallet, mobile phone.")));
         }
         payment.setChanged(Timestamp.valueOf(LocalDateTime.now()));

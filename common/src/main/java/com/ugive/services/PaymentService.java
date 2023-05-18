@@ -1,23 +1,23 @@
 package com.ugive.services;
 
-import com.ugive.dto.PaymentDto;
+import com.ugive.dto.PaymentRequest;
 import com.ugive.models.Payment;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PaymentService {
-    Optional<Payment> create(PaymentDto paymentDto);
+    Optional<Payment> create(PaymentRequest paymentRequest);
 
     Optional<Payment> makePayment (Long purchaseOfferId, String type, Long customerId);
 
-    Optional<Payment> update(Long id, PaymentDto paymentDto);
+    Optional<Payment> update(Long id, PaymentRequest paymentRequest);
 
-    List<PaymentDto> findAll(int page, int size);
+    List<Payment> findAll(int page, int size);
 
-    List<PaymentDto> findAllForOneUser(Long userId);
+    List<Payment> findAllForOneUser(Long userId);
 
-    PaymentDto findOne(Long id);
+    Payment findOne(Long id);
 
     void markAsDeleted(Long id);
 }
