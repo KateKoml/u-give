@@ -7,6 +7,7 @@ import com.ugive.exceptions.MoneyTransactionException;
 import com.ugive.mappers.UserBalanceMapper;
 import com.ugive.models.UserBalance;
 import com.ugive.repositories.UserBalanceRepository;
+import com.ugive.repositories.UserRepository;
 import com.ugive.services.UserBalanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Service
 public class UserBalanceServiceImpl implements UserBalanceService {
     private final UserBalanceMapper userBalanceMapper;
+    private final UserRepository userRepository;
     private final UserBalanceRepository userBalanceRepository;
 
     @Override
@@ -87,8 +89,8 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Override
     @Transactional
     public UserBalanceDto sendMoney(Long idFirstUser, Long idSecondUser, BigDecimal price) {
-        UserBalance firstUserBalance = userBalanceCheck(idFirstUser);
-        UserBalance secondUserBalance = userBalanceCheck(idSecondUser);
+        UserBalance firstUserBalance = userBalanceRepository.findByUserId(idFirstUser);
+        UserBalance secondUserBalance = userBalanceRepository.findByUserId(idSecondUser);
         BigDecimal currentBalance = firstUserBalance.getBalance();
         BigDecimal secondUser = secondUserBalance.getBalance();
 

@@ -65,10 +65,10 @@ public class UserBalanceController {
     }
 
     @PutMapping("/balance/{id}/send")
-    public ResponseEntity<UserBalanceDto> putMoneyOnBalance(@PathVariable("id") Long idFirstUserBalance,
-                                                            @RequestParam Long idSecondUserBalance,
+    public ResponseEntity<UserBalanceDto> putMoneyOnBalance(@PathVariable("id") Long idFirstUser,
+                                                            @RequestParam Long idSecondUser,
                                                             @RequestParam BigDecimal newMoney) {
-        UserBalanceDto userBalance = userBalanceService.sendMoney(idFirstUserBalance, idSecondUserBalance, newMoney);
+        UserBalanceDto userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
