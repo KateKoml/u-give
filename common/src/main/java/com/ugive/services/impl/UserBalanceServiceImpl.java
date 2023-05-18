@@ -100,7 +100,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
             throw new ForbiddenChangeException("User balance " + idFirstUser + " is not available, user was deleted.");
         } else if (Boolean.TRUE.equals(secondUserBalance.getIsDeleted())) {
             throw new ForbiddenChangeException("User balance " + idSecondUser + " is not available, user was deleted.");
-        } else if (compareMoney < 0) {
+        } else if (compareMoney <= 0) {
             throw new MoneyTransactionException("User with balance " + idFirstUser + " don't have enough money. Balance is " + currentBalance + ".");
         }
 
