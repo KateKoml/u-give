@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.PaymentRequest;
+import com.ugive.requests.PaymentRequest;
 import com.ugive.models.Payment;
 
 import java.util.List;

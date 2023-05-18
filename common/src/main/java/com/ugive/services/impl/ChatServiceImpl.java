@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.ChatRequest;
+import com.ugive.requests.ChatRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.ModifyingChatException;

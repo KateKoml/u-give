@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.PaymentRequest;
+import com.ugive.requests.PaymentRequest;
 import com.ugive.models.Payment;
 import com.ugive.services.PaymentService;
 import jakarta.validation.Valid;

@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.PaymentRequest;
+import com.ugive.requests.PaymentRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Payment;
 import com.ugive.repositories.PurchaseOfferRepository;

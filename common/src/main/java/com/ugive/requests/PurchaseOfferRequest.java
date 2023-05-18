@@ -1,4 +1,4 @@
-package com.ugive.dto;
+package com.ugive.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

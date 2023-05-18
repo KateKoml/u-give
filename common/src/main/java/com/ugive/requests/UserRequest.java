@@ -1,4 +1,4 @@
-package com.ugive.dto;
+package com.ugive.requests;
 
 import com.ugive.models.enums.Gender;
 import lombok.AllArgsConstructor;

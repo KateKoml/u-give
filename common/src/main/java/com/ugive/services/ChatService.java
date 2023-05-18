@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.ChatRequest;
+import com.ugive.requests.ChatRequest;
 import com.ugive.models.Chat;
 
 import java.util.List;

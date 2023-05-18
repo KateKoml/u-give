@@ -1,7 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.UserBalanceRequest;
-import com.ugive.dto.UserBalanceRequest;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.models.UserBalance;
 
 import java.math.BigDecimal;

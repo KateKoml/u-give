@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.PurchaseOfferRequest;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.services.PurchaseOfferService;

@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.PurchaseOfferRequest;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 
 import java.util.List;

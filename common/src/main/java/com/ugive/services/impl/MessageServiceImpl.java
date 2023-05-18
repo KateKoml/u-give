@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.MessageRequest;
+import com.ugive.requests.MessageRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.MessageMapper;

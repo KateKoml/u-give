@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.UserRequest;
+import com.ugive.requests.UserRequest;
 import com.ugive.models.User;
 
 import java.util.List;

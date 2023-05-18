@@ -1,4 +1,4 @@
-package com.ugive.dto;
+package com.ugive.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatRequest {
-    private Long sender;
-    private Long recipient;
+public class FavouriteRequest {
+    private Long user;
+    private Long purchaseOffer;
 }

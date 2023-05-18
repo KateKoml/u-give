@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.MessageRequest;
+import com.ugive.requests.MessageRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Message;
 import com.ugive.repositories.ChatRepository;

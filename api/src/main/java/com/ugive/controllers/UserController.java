@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.UserRequest;
+import com.ugive.requests.UserRequest;
 import com.ugive.models.User;
 import com.ugive.services.UserService;
 import jakarta.validation.Valid;

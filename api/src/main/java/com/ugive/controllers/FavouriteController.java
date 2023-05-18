@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.FavouriteRequest;
+import com.ugive.requests.FavouriteRequest;
 import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.services.FavouriteService;

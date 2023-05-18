@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.UserBalanceRequest;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.models.UserBalance;
 import com.ugive.services.UserBalanceService;
 import jakarta.validation.Valid;

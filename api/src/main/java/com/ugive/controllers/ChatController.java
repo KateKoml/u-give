@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.ChatRequest;
+import com.ugive.requests.ChatRequest;
 import com.ugive.models.Chat;
 import com.ugive.services.ChatService;
 import jakarta.validation.Valid;

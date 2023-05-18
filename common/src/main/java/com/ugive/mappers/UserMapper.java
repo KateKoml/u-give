@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.UserRequest;
+import com.ugive.requests.UserRequest;
 import com.ugive.models.AuthenticationInfo;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;

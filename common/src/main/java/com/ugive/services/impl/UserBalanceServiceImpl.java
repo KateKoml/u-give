@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.UserBalanceRequest;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.MoneyTransactionException;

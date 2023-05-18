@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.FavouriteRequest;
+import com.ugive.requests.FavouriteRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;

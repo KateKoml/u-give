@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.dto.MessageRequest;
+import com.ugive.requests.MessageRequest;
 import com.ugive.models.Message;
 
 import java.util.List;

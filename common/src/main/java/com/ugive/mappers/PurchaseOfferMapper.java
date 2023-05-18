@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.PurchaseOfferRequest;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.catalogs.OfferStatusRepository;
 import com.ugive.repositories.catalogs.ProductCategoryRepository;

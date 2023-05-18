@@ -1,4 +1,4 @@
-package com.ugive.dto;
+package com.ugive.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MessageRequest {
-    private Long privateChat;
-    private Long sender;
-    private String text;
+public class PaymentRequest {
+    private Long offerToPay;
+    private Integer typeOfPayment;
 }

@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.PurchaseOfferRequest;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
