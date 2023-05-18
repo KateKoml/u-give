@@ -6,19 +6,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-public interface ChatRepository extends
-        JpaRepository<Chat, Long>,
-        PagingAndSortingRepository<Chat, Long>,
-        CrudRepository<Chat, Long> {
+public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Chat findByFirstUserAndSecondUser(User firstUser, User secondUser);
+
     @Query("SELECT c FROM Chat c WHERE c.firstUser.id = :userId OR c.secondUser.id = :userId")
     List<Chat> findAllByFirstUserIdOrSecondUserId(Long userId, Sort sort);
 

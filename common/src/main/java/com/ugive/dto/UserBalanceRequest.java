@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserBalanceDto {
+public class UserBalanceRequest {
     private Long person;
     private BigDecimal money;
 }

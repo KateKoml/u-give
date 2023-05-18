@@ -1,23 +1,15 @@
 package com.ugive.repositories;
 
-import com.ugive.models.Role;
 import com.ugive.models.User;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends
-        JpaRepository<User, Long>,
-        PagingAndSortingRepository<User, Long>,
-        CrudRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
 
     Optional<User> findByUserName(String userName);

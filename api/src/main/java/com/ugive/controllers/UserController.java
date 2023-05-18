@@ -3,7 +3,6 @@ package com.ugive.controllers;
 import com.ugive.dto.UserRequest;
 import com.ugive.models.User;
 import com.ugive.services.UserService;
-import com.ugive.services.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -40,7 +39,7 @@ public class UserController {
         return ResponseEntity.ok(userService.findOne(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Optional<User>> createUser(@Valid @RequestBody UserRequest userRequest) {
         Optional<User> createdUser = userService.create(userRequest);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -52,7 +51,7 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Long id) {
         userService.softDelete(id);
         return new ResponseEntity<>("Your account is deleted. You can restore it within 30 days.", HttpStatus.OK);

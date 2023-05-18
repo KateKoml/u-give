@@ -25,14 +25,6 @@ public class UserMapper {
         return user;
     }
 
-//    public UserRequest toRequest(User user) {
-//        UserRequest userRequest = modelMapper.map(user, UserRequest.class);
-//        userRequest.setEmail(user.getAuthenticationInfo().getEmail());
-//        userRequest.setLogin(user.getAuthenticationInfo().getLogin());
-//        userRequest.setPassword(user.getAuthenticationInfo().getPassword());
-//        return userRequest;
-//    }
-
     public void updateEntityFromRequest(UserRequest userRequest, User user) {
         if (userRequest.getUserName() != null) {
             user.setUserName(userRequest.getUserName());

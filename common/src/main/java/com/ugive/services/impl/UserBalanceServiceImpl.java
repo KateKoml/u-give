@@ -1,13 +1,12 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.UserBalanceDto;
+import com.ugive.dto.UserBalanceRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.MoneyTransactionException;
 import com.ugive.mappers.UserBalanceMapper;
 import com.ugive.models.UserBalance;
 import com.ugive.repositories.UserBalanceRepository;
-import com.ugive.repositories.UserRepository;
 import com.ugive.services.UserBalanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,68 +26,62 @@ import java.util.Optional;
 @Service
 public class UserBalanceServiceImpl implements UserBalanceService {
     private final UserBalanceMapper userBalanceMapper;
-    private final UserRepository userRepository;
     private final UserBalanceRepository userBalanceRepository;
 
     @Override
-    public Optional<UserBalance> create(UserBalanceDto userBalanceDto) {
+    public Optional<UserBalance> create(UserBalanceRequest userBalanceDto) {
         UserBalance userBalance = userBalanceMapper.toEntity(userBalanceDto);
         return Optional.of(userBalanceRepository.save(userBalance));
     }
 
     @Override
-    public Optional<UserBalance> update(Long id, UserBalanceDto userBalanceDto) {
-        UserBalance userBalance = userBalanceCheck(id);
-        if (Boolean.TRUE.equals(userBalance.getIsDeleted())) {
-            throw new ForbiddenChangeException("User balance is not available, user was deleted.");
-        }
+    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceDto) {
+        UserBalance userBalance = findOne(id);
         userBalanceMapper.updateEntityFromDto(userBalanceDto, userBalance);
         return Optional.of(userBalanceRepository.save(userBalance));
     }
 
     @Override
-    public List<UserBalanceDto> findAll(int page, int size) {
+    public List<UserBalance> findAll(int page, int size) {
         Page<UserBalance> userBalances = userBalanceRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
-        return userBalances.getContent().stream().map(userBalanceMapper::toDto).toList();
+        return userBalances.getContent().stream().toList();
     }
 
     @Override
-    public UserBalanceDto findOne(Long id) {
-        UserBalance userBalance = userBalanceCheck(id);
-        if (Boolean.TRUE.equals(userBalance.getIsDeleted())) {
+    public UserBalance findOne(Long id) {
+        UserBalance userBalance = userBalanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This balance is not available."));
+        if (userBalance.isDeleted()) {
             throw new ForbiddenChangeException("User balance is not available, user was deleted.");
         }
-        return userBalanceMapper.toDto(userBalance);
+        return userBalance;
     }
 
     @Override
     public void softDelete(Long id) {
-        UserBalance userBalance = userBalanceCheck(id);
-        userBalance.setIsDeleted(true);
+        UserBalance userBalance = findOne(id);
+        userBalance.setDeleted(true);
         userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         userBalanceRepository.save(userBalance);
     }
 
     @Override
     @Transactional
-    public UserBalanceDto topUpBalance(Long id, BigDecimal money) {
-        UserBalance userBalance = userBalanceCheck(id);
-        if (Boolean.TRUE.equals(userBalance.getIsDeleted())) {
-            throw new ForbiddenChangeException("User balance is not available, user was deleted.");
-        }
+    public UserBalance topUpBalance(Long id, BigDecimal money) {
+        UserBalance userBalance = findOne(id);
 
         BigDecimal currentBalance = userBalance.getBalance();
         BigDecimal newBalance = currentBalance.add(money);
+
         userBalance.setBalance(newBalance.setScale(2, RoundingMode.UNNECESSARY));
         userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 
-        userBalanceRepository.save(userBalance);
-        return userBalanceMapper.toDto(userBalance);
+
+        return userBalanceRepository.save(userBalance);
     }
 
     @Override
     @Transactional
-    public UserBalanceDto sendMoney(Long idFirstUser, Long idSecondUser, BigDecimal price) {
+    public UserBalance sendMoney(Long idFirstUser, Long idSecondUser, BigDecimal price) {
         UserBalance firstUserBalance = userBalanceRepository.findByUserId(idFirstUser);
         UserBalance secondUserBalance = userBalanceRepository.findByUserId(idSecondUser);
         BigDecimal currentBalance = firstUserBalance.getBalance();
@@ -96,9 +89,9 @@ public class UserBalanceServiceImpl implements UserBalanceService {
 
         int compareMoney = currentBalance.compareTo(price);
 
-        if (Boolean.TRUE.equals(firstUserBalance.getIsDeleted())) {
+        if (firstUserBalance.isDeleted()) {
             throw new ForbiddenChangeException("User balance " + idFirstUser + " is not available, user was deleted.");
-        } else if (Boolean.TRUE.equals(secondUserBalance.getIsDeleted())) {
+        } else if (secondUserBalance.isDeleted()) {
             throw new ForbiddenChangeException("User balance " + idSecondUser + " is not available, user was deleted.");
         } else if (compareMoney <= 0) {
             throw new MoneyTransactionException("User with balance " + idFirstUser + " don't have enough money. Balance is " + currentBalance + ".");
@@ -115,21 +108,17 @@ public class UserBalanceServiceImpl implements UserBalanceService {
 
         userBalanceRepository.save(firstUserBalance);
         userBalanceRepository.save(secondUserBalance);
-        return userBalanceMapper.toDto(firstUserBalance);
+        return firstUserBalance;
     }
 
     @Override
-    public UserBalanceDto getBalanceByUserId(Long userId) {
+    public UserBalance getBalanceByUserId(Long userId) {
         UserBalance userBalance;
         try {
             userBalance = userBalanceRepository.findByUserId(userId);
         } catch (EntityNotFoundException ex) {
             throw new EntityNotFoundException("User not found.");
         }
-        return userBalanceMapper.toDto(userBalance);
-    }
-
-    private UserBalance userBalanceCheck(Long id) {
-        return userBalanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This balance is not available."));
+        return userBalance;
     }
 }

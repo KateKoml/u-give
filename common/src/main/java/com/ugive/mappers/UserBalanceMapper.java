@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.UserBalanceDto;
+import com.ugive.dto.UserBalanceRequest;
 import com.ugive.models.UserBalance;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,25 +13,18 @@ public class UserBalanceMapper {
     private final ModelMapper modelMapper;
     private final UserService userService;
 
-    public UserBalance toEntity(UserBalanceDto userBalanceDto) {
-        UserBalance userBalance = modelMapper.map(userBalanceDto, UserBalance.class);
-        userBalance.setUser(userService.findOne(userBalanceDto.getPerson()));
+    public UserBalance toEntity(UserBalanceRequest userBalanceRequest) {
+        UserBalance userBalance = modelMapper.map(userBalanceRequest, UserBalance.class);
+        userBalance.setUser(userService.findOne(userBalanceRequest.getPerson()));
         return userBalance;
     }
 
-    public UserBalanceDto toDto(UserBalance userBalance) {
-        UserBalanceDto userBalanceDto = new UserBalanceDto();
-        userBalanceDto.setPerson(userBalance.getUser().getId());
-        userBalanceDto.setMoney(userBalance.getBalance());
-        return userBalanceDto;
-    }
-
-    public void updateEntityFromDto(UserBalanceDto userBalanceDto, UserBalance userBalance) {
-        if (userBalanceDto.getPerson() != null) {
-            userBalance.setUser(userService.findOne(userBalanceDto.getPerson()));
+    public void updateEntityFromDto(UserBalanceRequest userBalanceRequest, UserBalance userBalance) {
+        if (userBalanceRequest.getPerson() != null) {
+            userBalance.setUser(userService.findOne(userBalanceRequest.getPerson()));
         }
-        if (userBalanceDto.getMoney() != null) {
-            userBalance.setBalance(userBalanceDto.getMoney());
+        if (userBalanceRequest.getMoney() != null) {
+            userBalance.setBalance(userBalanceRequest.getMoney());
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.UserBalanceDto;
+import com.ugive.dto.UserBalanceRequest;
 import com.ugive.models.UserBalance;
 import com.ugive.repositories.UserBalanceRepository;
 import com.ugive.services.UserBalanceService;
@@ -29,46 +29,46 @@ public class UserBalanceController {
     private final UserBalanceService userBalanceService;
 
     @GetMapping("/balance")
-    public ResponseEntity<List<UserBalanceDto>> findAll(
+    public ResponseEntity<List<UserBalance>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<UserBalanceDto> userBalances = userBalanceService.findAll(page, size);
+        List<UserBalance> userBalances = userBalanceService.findAll(page, size);
         return new ResponseEntity<>(userBalances, HttpStatus.OK);
     }
 
     @GetMapping("/balance/{id}")
-    public ResponseEntity<UserBalanceDto> getBalanceById(@PathVariable Long id) {
+    public ResponseEntity<UserBalance> getBalanceById(@PathVariable Long id) {
         return ResponseEntity.ok(userBalanceService.findOne(id));
     }
 
     @GetMapping("{userId}/balance")
-    public ResponseEntity<UserBalanceDto> getBalanceByUserId(@PathVariable Long userId) {
+    public ResponseEntity<UserBalance> getBalanceByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(userBalanceService.getBalanceByUserId(userId));
     }
 
     @PostMapping("/balance/create")
-    public ResponseEntity<Optional<UserBalance>> createUserBalance(@Valid @RequestBody UserBalanceDto userBalanceDto) {
-        Optional<UserBalance> userBalance = userBalanceService.create(userBalanceDto);
+    public ResponseEntity<Optional<UserBalance>> createUserBalance(@Valid @RequestBody UserBalanceRequest userBalanceRequest) {
+        Optional<UserBalance> userBalance = userBalanceService.create(userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
     @PutMapping("/balance/{id}/update")
-    public ResponseEntity<Optional<UserBalance>> updateBalance(@PathVariable("id") Long id, @RequestBody UserBalanceDto userBalanceDto) {
-        Optional<UserBalance> userBalance = userBalanceService.update(id, userBalanceDto);
+    public ResponseEntity<Optional<UserBalance>> updateBalance(@PathVariable("id") Long id, @RequestBody UserBalanceRequest userBalanceRequest) {
+        Optional<UserBalance> userBalance = userBalanceService.update(id, userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
     @PutMapping("/balance/{id}/deposit")
-    public ResponseEntity<UserBalanceDto> putMoneyOnBalance(@PathVariable("id") Long id, @RequestParam BigDecimal newMoney) {
-        UserBalanceDto userBalance = userBalanceService.topUpBalance(id, newMoney);
+    public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long id, @RequestParam BigDecimal newMoney) {
+        UserBalance userBalance = userBalanceService.topUpBalance(id, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
     @PutMapping("/balance/{id}/send")
-    public ResponseEntity<UserBalanceDto> putMoneyOnBalance(@PathVariable("id") Long idFirstUser,
+    public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long idFirstUser,
                                                             @RequestParam Long idSecondUser,
                                                             @RequestParam BigDecimal newMoney) {
-        UserBalanceDto userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
+        UserBalance userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 

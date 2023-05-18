@@ -5,20 +5,17 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-public interface PurchaseOfferRepository extends
-        JpaRepository<PurchaseOffer, Long>,
-        PagingAndSortingRepository<PurchaseOffer, Long>,
-        CrudRepository<PurchaseOffer, Long> {
+public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Long> {
     @Cacheable("purchase_offers")
-    List<PurchaseOffer> findByProductNameContainingIgnoreCase(String productName);;
+    List<PurchaseOffer> findByProductNameContainingIgnoreCase(String productName);
+
+    ;
 
     List<PurchaseOffer> findBySellerId(Long sellerId);
 
