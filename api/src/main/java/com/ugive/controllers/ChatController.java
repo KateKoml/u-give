@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.ChatDto;
+import com.ugive.dto.ChatRequest;
 import com.ugive.models.Chat;
 import com.ugive.services.ChatService;
 import jakarta.validation.Valid;
@@ -27,37 +27,38 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/chats")
-    public ResponseEntity<List<ChatDto>> findAll(
+    public ResponseEntity<List<Chat>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<ChatDto> chats = chatService.findAll(page, size);
+        List<Chat> chats = chatService.findAll(page, size);
         return new ResponseEntity<>(chats, HttpStatus.OK);
     }
 
     @GetMapping("/chats/{id}")
-    public ResponseEntity<ChatDto> getChatById(@PathVariable Long id) {
-        return ResponseEntity.ok(chatService.findOne(id));
+    public ResponseEntity<Chat> getChatById(@PathVariable Long id) {
+        Chat chat = chatService.findOne(id);
+        return new ResponseEntity<>(chat, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/chats")
-    public ResponseEntity<List<ChatDto>> getAllUserChats( @PathVariable Long userId) {
-        List<ChatDto> userChats = chatService.getListOfChatsForUser(userId);
-        return ResponseEntity.ok(userChats);
+    public ResponseEntity<List<Chat>> getAllUserChats(@PathVariable Long userId) {
+        List<Chat> userChats = chatService.getListOfChatsForUser(userId);
+        return new ResponseEntity<>(userChats, HttpStatus.OK);
     }
 
-    @PostMapping("/chats/create")
-    public ResponseEntity<Optional<Chat>> createChat(@Valid @RequestBody ChatDto chatDto) {
-        Optional<Chat> chat = chatService.create(chatDto);
+    @PostMapping("/chats")
+    public ResponseEntity<Optional<Chat>> createChat(@Valid @RequestBody ChatRequest chatRequest) {
+        Optional<Chat> chat = chatService.create(chatRequest);
         return new ResponseEntity<>(chat, HttpStatus.CREATED);
     }
 
     @PutMapping("/chats/{id}/update")
-    public ResponseEntity<Optional<Chat>> updateChat(@PathVariable("id") Long id, @RequestBody ChatDto chatDto) {
-        Optional<Chat> chat = chatService.update(id, chatDto);
+    public ResponseEntity<Optional<Chat>> updateChat(@PathVariable("id") Long id, @RequestBody ChatRequest chatRequest) {
+        Optional<Chat> chat = chatService.update(id, chatRequest);
         return new ResponseEntity<>(chat, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/chats/{id}/delete")
+    @DeleteMapping("/chats/{id}")
     public ResponseEntity<String> deleteChat(@PathVariable("id") Long id) {
         chatService.softDelete(id);
         return new ResponseEntity<>("This chat is deleted.", HttpStatus.OK);

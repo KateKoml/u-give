@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.ChatDto;
+import com.ugive.dto.ChatRequest;
 import com.ugive.models.Chat;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,28 +16,19 @@ public class ChatMapper {
     private final ModelMapper modelMapper;
     private final UserService userService;
 
-    public Chat toEntity(ChatDto chatDto){
-        Chat chat = modelMapper.map(chatDto, Chat.class);
-        chat.setFirstUser(userService.findOne(chatDto.getSender()));
-        chat.setSecondUser(userService.findOne(chatDto.getRecipient()));
+    public Chat toEntity(ChatRequest chatRequest){
+        Chat chat = modelMapper.map(chatRequest, Chat.class);
+        chat.setFirstUser(userService.findOne(chatRequest.getSender()));
+        chat.setSecondUser(userService.findOne(chatRequest.getRecipient()));
         return chat;
     }
 
-    public ChatDto toDto(Chat chat) {
-        Long firstUserId = chat.getFirstUser().getId();
-        Long secondUserId = chat.getSecondUser().getId();
-        ChatDto chatDto = modelMapper.map(chat, ChatDto.class);
-        chatDto.setSender(firstUserId);
-        chatDto.setRecipient(secondUserId);
-        return chatDto;
-    }
-
-    public void updateEntityFromDto(ChatDto chatDto, Chat chat) {
-        if (chatDto.getSender() != null) {
-            chat.setFirstUser(userService.findOne(chatDto.getSender()));
+    public void updateEntityFromRequest(ChatRequest chatRequest, Chat chat) {
+        if (chatRequest.getSender() != null) {
+            chat.setFirstUser(userService.findOne(chatRequest.getSender()));
         }
-        if (chatDto.getRecipient() != null) {
-            chat.setSecondUser(userService.findOne(chatDto.getRecipient()));
+        if (chatRequest.getRecipient() != null) {
+            chat.setSecondUser(userService.findOne(chatRequest.getRecipient()));
         }
         chat.setChanged(Timestamp.valueOf(LocalDateTime.now()));
 

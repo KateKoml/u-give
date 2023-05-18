@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.ChatDto;
+import com.ugive.dto.ChatRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.ModifyingChatException;
@@ -29,8 +29,8 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMapper chatMapper;
 
     @Override
-    public Optional<Chat> create(ChatDto chatDto) {
-        Chat chat = chatMapper.toEntity(chatDto);
+    public Optional<Chat> create(ChatRequest chatRequest) {
+        Chat chat = chatMapper.toEntity(chatRequest);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
             throw new ModifyingChatException("This chat is already exists.");
         }
@@ -38,54 +38,41 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public Optional<Chat> update(Long id, ChatDto chatDto) {
+    public Optional<Chat> update(Long id, ChatRequest chatRequest) {
         Chat chat = chatCheck(id);
-        if (Boolean.TRUE.equals(chat.getIsDeleted())) {
-            throw new ForbiddenChangeException("Chat is deleted");
-        }
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
             throw new ModifyingChatException("This chat is already exists.");
         }
-        chatMapper.updateEntityFromDto(chatDto, chat);
+        chatMapper.updateEntityFromRequest(chatRequest, chat);
         return Optional.of(chatRepository.save(chat));
     }
 
     @Override
-    public List<ChatDto> findAll(int page, int size) {
+    public List<Chat> findAll(int page, int size) {
         Page<Chat> chatsPage = chatRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
-        return chatsPage.getContent().stream()
-                .map(chatMapper::toDto)
-                .toList();
+        return chatsPage.getContent().stream().toList();
     }
 
     @Override
-    public List<ChatDto> findAll() {
-        List<Chat> chats = chatRepository.findAll();
-        return chats.stream().map(chatMapper::toDto).toList();
+    public List<Chat> findAll() {
+        return chatRepository.findAll();
     }
 
     @Override
-    public ChatDto findOne(Long id) {
-        Chat chat = chatCheck(id);
-        if (Boolean.TRUE.equals(chat.getIsDeleted())) {
-            throw new ForbiddenChangeException("Chat is deleted");
-        }
-        return chatMapper.toDto(chat);
+    public Chat findOne(Long id) {
+        return chatCheck(id);
     }
 
     @Override
-    public List<ChatDto> getListOfChatsForUser(Long userId) {
+    public List<Chat> getListOfChatsForUser(Long userId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "changed");
-        List<Chat> chats = chatRepository.findAllByFirstUserIdOrSecondUserId(userId, sort);
-        return chats.stream()
-                .map(chatMapper::toDto)
-                .toList();
+        return chatRepository.findAllByFirstUserIdOrSecondUserId(userId, sort);
     }
 
     @Override
     public void softDelete(Long id) {
         Chat chat = chatCheck(id);
-        chat.setIsDeleted(true);
+        chat.setDeleted(true);
         chat.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         chatRepository.save(chat);
     }
@@ -98,7 +85,11 @@ public class ChatServiceImpl implements ChatService {
     }
 
     private Chat chatCheck(Long id) {
-        return chatRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This chat doesn't exist or was deleted."));
+        Chat chat = chatRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This chat doesn't exist or was deleted."));
+        if (chat.isDeleted()) {
+            throw new ForbiddenChangeException("Chat is deleted");
+        }
+        return chat;
     }
 
     public boolean isChatExistsBetweenUsers(User firstUser, User secondUser) {

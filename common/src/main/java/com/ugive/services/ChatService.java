@@ -1,23 +1,23 @@
 package com.ugive.services;
 
-import com.ugive.dto.ChatDto;
+import com.ugive.dto.ChatRequest;
 import com.ugive.models.Chat;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ChatService {
-    Optional<Chat> create(ChatDto chatDto);
+    Optional<Chat> create(ChatRequest chatRequest);
 
-    Optional<Chat> update(Long id, ChatDto chatDto);
+    Optional<Chat> update(Long id, ChatRequest chatRequest);
 
-    List<ChatDto> findAll(int page, int size);
+    List<Chat> findAll(int page, int size);
 
-    List<ChatDto> findAll();
+    List<Chat> findAll();
 
-    ChatDto findOne(Long id);
+    Chat findOne(Long id);
 
-    List<ChatDto> getListOfChatsForUser(Long userId);
+    List<Chat> getListOfChatsForUser(Long userId);
 
     void softDelete(Long id);
 }

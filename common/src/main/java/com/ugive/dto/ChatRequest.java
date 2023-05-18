@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatDto {
+public class ChatRequest {
     private Long sender;
     private Long recipient;
 }
