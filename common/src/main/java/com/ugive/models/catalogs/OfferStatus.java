@@ -47,7 +47,7 @@ public class OfferStatus {
 
     @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

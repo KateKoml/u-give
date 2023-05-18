@@ -1,4 +1,4 @@
-package com.ugive.controllers;
+package com.ugive.controllers.mvc;
 
 
 import com.ugive.models.PurchaseOffer;

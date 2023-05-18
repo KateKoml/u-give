@@ -1,6 +1,6 @@
 package com.ugive.mappers;
 
-import com.ugive.dto.UserDto;
+import com.ugive.dto.UserRequest;
 import com.ugive.models.AuthenticationInfo;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;
@@ -16,44 +16,44 @@ import java.time.LocalDateTime;
 public class UserMapper {
     private final ModelMapper modelMapper;
 
-    public User toEntity(UserDto userDto) {
-        User user = modelMapper.map(userDto, User.class);
+    public User toEntity(UserRequest userRequest) {
+        User user = modelMapper.map(userRequest, User.class);
         if (user.getGender() == null) {
             user.setGender(Gender.NOT_SELECTED);
         }
-        user.setAuthenticationInfo(new AuthenticationInfo(userDto.getEmail(), userDto.getLogin(), userDto.getPassword()));
+        user.setAuthenticationInfo(new AuthenticationInfo(userRequest.getEmail(), userRequest.getLogin(), userRequest.getPassword()));
         return user;
     }
 
-    public UserDto toDto(User user) {
-        UserDto userDto = modelMapper.map(user, UserDto.class);
-        userDto.setEmail(user.getAuthenticationInfo().getEmail());
-        userDto.setLogin(user.getAuthenticationInfo().getLogin());
-        userDto.setPassword(user.getAuthenticationInfo().getPassword());
-        return userDto;
-    }
+//    public UserRequest toRequest(User user) {
+//        UserRequest userRequest = modelMapper.map(user, UserRequest.class);
+//        userRequest.setEmail(user.getAuthenticationInfo().getEmail());
+//        userRequest.setLogin(user.getAuthenticationInfo().getLogin());
+//        userRequest.setPassword(user.getAuthenticationInfo().getPassword());
+//        return userRequest;
+//    }
 
-    public void updateEntityFromDto(UserDto userDTO, User user) {
-        if (userDTO.getUserName() != null) {
-            user.setUserName(userDTO.getUserName());
+    public void updateEntityFromRequest(UserRequest userRequest, User user) {
+        if (userRequest.getUserName() != null) {
+            user.setUserName(userRequest.getUserName());
         }
-        if (userDTO.getSurname() != null) {
-            user.setSurname(userDTO.getSurname());
+        if (userRequest.getSurname() != null) {
+            user.setSurname(userRequest.getSurname());
         }
-        if (userDTO.getGender() != null) {
-            user.setGender(userDTO.getGender());
+        if (userRequest.getGender() != null) {
+            user.setGender(userRequest.getGender());
         }
-        if (userDTO.getPhone() != null) {
-            user.setPhone(userDTO.getPhone());
+        if (userRequest.getPhone() != null) {
+            user.setPhone(userRequest.getPhone());
         }
-        if (userDTO.getEmail() != null) {
-            user.getAuthenticationInfo().setEmail(userDTO.getEmail());
+        if (userRequest.getEmail() != null) {
+            user.getAuthenticationInfo().setEmail(userRequest.getEmail());
         }
-        if (userDTO.getLogin() != null) {
-            user.getAuthenticationInfo().setLogin(userDTO.getLogin());
+        if (userRequest.getLogin() != null) {
+            user.getAuthenticationInfo().setLogin(userRequest.getLogin());
         }
-        if (userDTO.getPassword() != null) {
-            user.getAuthenticationInfo().setPassword(userDTO.getPassword());
+        if (userRequest.getPassword() != null) {
+            user.getAuthenticationInfo().setPassword(userRequest.getPassword());
         }
         user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
     }

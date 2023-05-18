@@ -63,7 +63,7 @@ public class Message {
 
     @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
-    private Boolean isDeleted = false;
+    private boolean isDeleted = false;
 
     @Override
     public String toString() {

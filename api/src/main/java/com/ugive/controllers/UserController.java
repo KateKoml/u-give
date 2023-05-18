@@ -1,6 +1,6 @@
 package com.ugive.controllers;
 
-import com.ugive.dto.UserDto;
+import com.ugive.dto.UserRequest;
 import com.ugive.models.User;
 import com.ugive.services.UserService;
 import com.ugive.services.impl.UserServiceImpl;
@@ -41,14 +41,14 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Optional<User>> createUser(@Valid @RequestBody UserDto userDto) {
-        Optional<User> createdUser = userService.create(userDto);
+    public ResponseEntity<Optional<User>> createUser(@Valid @RequestBody UserRequest userRequest) {
+        Optional<User> createdUser = userService.create(userRequest);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<User>> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
-        Optional<User> updatedUser = userService.update(id, userDto);
+    public ResponseEntity<Optional<User>> updateUser(@PathVariable("id") Long id, @RequestBody UserRequest userRequest) {
+        Optional<User> updatedUser = userService.update(id, userRequest);
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }
 

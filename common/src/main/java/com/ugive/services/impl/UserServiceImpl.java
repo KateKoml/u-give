@@ -1,6 +1,6 @@
 package com.ugive.services.impl;
 
-import com.ugive.dto.UserDto;
+import com.ugive.dto.UserRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.UserValidationException;
@@ -43,36 +43,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Optional<User> create(UserDto userDto) {
-        validationCheck(userDto);
-        User user = userMapper.toEntity(userDto);
+    public Optional<User> create(UserRequest userRequest) {
+        validationCheck(userRequest);
+        User user = userMapper.toEntity(userRequest);
         Role userRole = roleRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("This role doesn't exist")); // получаем объект Role из БД
         user.getRoles().add(userRole);
         return Optional.of(userRepository.save(user));
     }
 
     @Override
-    public Optional<User> update(Long id, UserDto userDto) {
-        validationCheck(userDto);
+    public Optional<User> update(Long id, UserRequest userRequest) {
+        validationCheck(userRequest);
         User user = userCheck(id);
-        if (Boolean.TRUE.equals(user.getIsDeleted())) {
-            throw new ForbiddenChangeException("User is deleted");
-        }
-        userMapper.updateEntityFromDto(userDto, user);
+        userMapper.updateEntityFromRequest(userRequest, user);
         return Optional.of(userRepository.save(user));
     }
 
-    private void validationCheck(UserDto userDto) {
-        if (!nameValidation(userDto.getUserName()) || !nameValidation(userDto.getSurname())) {
+    private void validationCheck(UserRequest userRequest) {
+        if (!nameValidation(userRequest.getUserName()) || !nameValidation(userRequest.getSurname())) {
             throw new UserValidationException("Try another name. Example: Jack, Katerine.");
-        } else if (!emailValidation(userDto.getEmail())) {
+        } else if (!emailValidation(userRequest.getEmail())) {
             throw new UserValidationException("This e-mail doesn't exist!");
-        } else if (!phoneValidation(userDto.getPhone())) {
+        } else if (!phoneValidation(userRequest.getPhone())) {
             throw new UserValidationException("This phone doesn't exist!");
-        } else if (!passwordValidation(userDto.getPassword())) {
+        } else if (!passwordValidation(userRequest.getPassword())) {
             throw new UserValidationException("The password must be at least 6 characters (maximum 20 characters)" +
                     " and contains numbers, lowercase and uppercase letters.");
-        } else if (!loginValidation(userDto.getLogin())) {
+        } else if (!loginValidation(userRequest.getLogin())) {
             throw new UserValidationException("Try another login with numbers, letters, \"_\" and \"-\"");
         }
     }
@@ -98,27 +95,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findOne(Long id) {
-        User user = userCheck(id);
-        if (Boolean.TRUE.equals(user.getIsDeleted())) {
-            throw new ForbiddenChangeException("This account is deleted");
-        }
-        return user;
+        return userCheck(id);
     }
 
     public void softDelete(Long id) {
         User user = userCheck(id);
-        user.setIsDeleted(true);
+        user.setDeleted(true);
         user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         userRepository.save(user);
 
         UserBalance userBalance = userBalanceRepository.findByUserId(id);
-        userBalance.setIsDeleted(true);
+        userBalance.setDeleted(true);
         userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         userBalanceRepository.save(userBalance);
 
         List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
         for (PurchaseOffer offer : offers) {
-            offer.setIsDeleted(true);
+            offer.setDeleted(true);
             offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
             offerRepository.save(offer);
         }
@@ -128,16 +121,17 @@ public class UserServiceImpl implements UserService {
         User user = userCheck(id);
         UserBalance userBalance = userBalanceRepository.findByUserId(id);
 
-        if (Boolean.TRUE.equals(user.getIsDeleted())) {
-            user.setIsDeleted(false);
+        if (user.isDeleted()) {
+            user.setDeleted(false);
             user.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-            userBalance.setIsDeleted(false);
+
+            userBalance.setDeleted(false);
             userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
             userBalanceRepository.save(userBalance);
 
             List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
             for (PurchaseOffer offer : offers) {
-                offer.setIsDeleted(false);
+                offer.setDeleted(false);
                 offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
                 offerRepository.save(offer);
             }
@@ -153,7 +147,11 @@ public class UserServiceImpl implements UserService {
     }
 
     private User userCheck(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User could not be found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User could not be found"));
+        if (user.isDeleted()) {
+            throw new ForbiddenChangeException("User is deleted");
+        }
+        return user;
     }
 
     public boolean nameValidation(String name) {
