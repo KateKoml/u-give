@@ -11,7 +11,7 @@ create table public.users
     user_login    varchar(30)  not null
         constraint users_login_key
             unique,
-    user_password varchar(16)  not null,
+    user_password varchar(20)  not null,
     created       timestamp(6) not null,
     changed       timestamp(6) not null,
     is_deleted    boolean      not null

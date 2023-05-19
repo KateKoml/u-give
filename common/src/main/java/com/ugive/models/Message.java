@@ -16,8 +16,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -64,9 +62,4 @@ public class Message {
     @JsonIgnore
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
-    }
 }
