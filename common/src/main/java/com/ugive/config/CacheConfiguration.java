@@ -12,7 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfiguration {
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager("l_users_roles", "purchase_offers", "users");
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager("c_offer_status", "c_payment_type",
+                "c_product_categories", "c_product_conditions", "l_users_roles", "purchase_offers", "users");
         cacheManager.setCaffeine(cacheProperties());
         return cacheManager;
     }
