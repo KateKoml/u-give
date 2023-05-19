@@ -11,15 +11,12 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Cacheable("purchase_offers")
 public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Long> {
-    @Cacheable("purchase_offers")
     List<PurchaseOffer> findByProductNameContainingIgnoreCase(String productName);
-
-    ;
 
     List<PurchaseOffer> findBySellerId(Long sellerId);
 
-    @Cacheable("purchase_offers")
     @Query("SELECT po FROM PurchaseOffer po JOIN po.productCategory pc JOIN po.productCondition pcn " +
             "WHERE po.isDeleted = false AND pc.categoryName LIKE %:categoryName% AND pcn.conditionName LIKE %:conditionName% " +
             "AND po.price BETWEEN :minPrice AND :maxPrice")
