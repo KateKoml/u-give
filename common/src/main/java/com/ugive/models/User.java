@@ -77,7 +77,9 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    /*Default values for fields in l_users_roles table will be set in database*/
+    /**
+    *Default values for fields in l_users_roles table will be set in database
+    **/
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

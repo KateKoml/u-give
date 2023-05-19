@@ -44,7 +44,7 @@ public class Payment {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "payment_type_id", nullable = false) //проверить контроллером
+    @JoinColumn(name = "payment_type_id", nullable = false)
     @JsonBackReference
     private PaymentType paymentType;
 

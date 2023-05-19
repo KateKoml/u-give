@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         } else if (!phoneValidation(userRequest.getPhone())) {
             throw new UserValidationException("This phone doesn't exist!");
         } else if (!passwordValidation(userRequest.getPassword())) {
-            throw new UserValidationException("The password must be at least 6 characters (maximum 20 characters)" +
+            throw new UserValidationException("The password must be at least 6 characters (maximum 16 characters)" +
                     " and contains numbers, lowercase and uppercase letters.");
         } else if (!loginValidation(userRequest.getLogin())) {
             throw new UserValidationException("Try another login with numbers, letters, \"_\" and \"-\"");
