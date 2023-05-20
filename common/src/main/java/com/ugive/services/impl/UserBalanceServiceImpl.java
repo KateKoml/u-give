@@ -1,5 +1,6 @@
 package com.ugive.services.impl;
 
+import com.ugive.models.User;
 import com.ugive.requests.UserBalanceRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
@@ -44,9 +45,13 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserBalance> findAll(int page, int size) {
-        Page<UserBalance> userBalances = userBalanceRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
-        return userBalances.getContent().stream().toList();
+        Page<UserBalance> userBalances = userBalanceRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()));
+        return userBalances.getContent()
+                .stream()
+                .filter(user -> !user.isDeleted())
+                .toList();
     }
 
     @Override

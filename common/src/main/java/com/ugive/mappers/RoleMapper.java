@@ -18,7 +18,7 @@ public class RoleMapper {
         return modelMapper.map(roleRequest, Role.class);
     }
 
-    public Role updateRole(RoleRequest roleRequest, Role role) {
+    public Role updateEntityFromRequest(RoleRequest roleRequest, Role role) {
         if(roleRequest.getRoleName() != null) {
             role.setRoleName(roleRequest.getRoleName());
         }

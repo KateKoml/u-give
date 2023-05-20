@@ -1,20 +1,18 @@
 package com.ugive.services;
 
 import com.ugive.models.Role;
-import com.ugive.models.UserBalance;
 import com.ugive.requests.RoleRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface RoleService {
-    Optional<Role> create(RoleRequest roleRequest);
+    Role create(RoleRequest roleRequest);
 
-    Optional<UserBalance> update(Long id, RoleRequest roleRequest);
+    Role update(Integer id, RoleRequest roleRequest);
 
     List<Role> findAll();
 
-    Role findOne(Long id);
+    Role findOne(Integer id);
 
-    void delete(Long id);
+    void delete(Integer id);
 }
