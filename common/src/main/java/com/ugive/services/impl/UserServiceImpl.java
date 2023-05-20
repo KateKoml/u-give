@@ -87,7 +87,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Cacheable("users")
     public List<User> findAll(int page, int size) {
         Page<User> usersPage = userRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
         return usersPage.stream().toList();

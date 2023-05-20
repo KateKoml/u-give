@@ -1,6 +1,7 @@
 package com.ugive.repositories;
 
 import com.ugive.models.PurchaseOffer;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,6 +14,9 @@ import java.util.List;
 
 @Cacheable("purchase_offers")
 public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Long> {
+    @CacheEvict(value = "purchase_offers", allEntries = true)
+    <S extends PurchaseOffer> S save(S entity);
+
     List<PurchaseOffer> findByProductNameContainingIgnoreCase(String productName);
 
     List<PurchaseOffer> findBySellerId(Long sellerId);

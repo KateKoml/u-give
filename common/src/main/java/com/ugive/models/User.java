@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ import java.util.Set;
 @Builder
 @Data
 @Entity
+@Cacheable("users")
 @Table(name = "users")
 public class User {
     @Id

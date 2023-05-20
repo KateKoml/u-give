@@ -1,6 +1,7 @@
 package com.ugive.repositories;
 
 import com.ugive.models.User;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,6 +12,9 @@ import java.sql.Timestamp;
 import java.util.Optional;
 @Cacheable("users")
 public interface UserRepository extends JpaRepository<User, Long> {
+    @CacheEvict(value = "users", allEntries = true)
+    <S extends User> S save(S entity);
+
     Optional<User> findById(Long id);
 
     Optional<User> findByUserName(String userName);

@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Cacheable("c_payment_type")
 @Table(name = "c_payment_type")
 public class PaymentType {
     @Id
