@@ -31,12 +31,14 @@ public class FavouriteServiceImpl implements FavouriteService {
     private final FavouriteMapper favouriteMapper;
 
     @Override
+    @Transactional
     public Optional<Favourite> create(FavouriteRequest favouriteRequest) {
         Favourite favourite = favouriteMapper.toEntity(favouriteRequest);
         return Optional.of(favouriteRepository.save(favourite));
     }
 
     @Override
+    @Transactional
     public Optional<Favourite> update(Long id, FavouriteRequest favouriteRequest) {
         Favourite favourite = favouriteCheck(id);
         if (favourite.isDeleted()) {
@@ -59,6 +61,7 @@ public class FavouriteServiceImpl implements FavouriteService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         Favourite favourite = favouriteCheck(id);
         favourite.setDeleted(true);

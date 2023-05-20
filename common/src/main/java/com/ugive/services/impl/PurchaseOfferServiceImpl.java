@@ -4,6 +4,7 @@ import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
 import com.ugive.models.PurchaseOffer;
+import com.ugive.repositories.FavouriteRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.OfferStatusRepository;
@@ -29,14 +30,17 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     private final UserRepository userRepository;
     private final OfferStatusRepository statusRepository;
     private final PurchaseOfferMapper purchaseOfferMapper;
+    private final FavouriteRepository favouriteRepository;
 
     @Override
+    @Transactional
     public Optional<PurchaseOffer> create(PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = purchaseOfferMapper.toEntity(offerRequest);
         return Optional.of(offerRepository.save(offer));
     }
 
     @Override
+    @Transactional
     public Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
         purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
@@ -45,8 +49,11 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
 
     @Override
     public List<PurchaseOffer> findAll(int page, int size) {
-        Page<PurchaseOffer> offersPage = offerRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
-        return offersPage.getContent().stream().toList();
+        Page<PurchaseOffer> offersPage = offerRepository.findAll(PageRequest.of(page, size, Sort.by("created").descending()));
+        return offersPage.getContent()
+                .stream()
+                .filter(offer -> !offer.isDeleted())
+                .toList();
     }
 
     @Override
@@ -65,6 +72,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     }
 
     @Override
+    @Transactional
     public void markAsSoldOffers(Long id, Long customerId) {
         PurchaseOffer offer = offerCheck(id);
         offer.setOfferStatus(statusRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Wrong status")));
@@ -74,6 +82,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         PurchaseOffer offer = offerCheck(id);
         offer.setDeleted(true);
@@ -93,11 +102,17 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         return Optional.of(offerRepository.save(offer));
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 */1 * * * *") // Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
     @Transactional
-    public void deleteExpiredUsers() {
+    public void deleteExpiredOffer() {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(5));
-        offerRepository.deleteExpiredOffer(expirationDate);
+        List<PurchaseOffer> expiredOffers = offerRepository.findExpiredOffers(expirationDate);
+        for (PurchaseOffer offer : expiredOffers) {
+            offerRepository.deleteConnectedFavourite(offer);
+            offerRepository.deleteConnectedPayment(offer);
+            offerRepository.delete(offer);
+        }
+       // offerRepository.deleteExpiredOffer(expirationDate);
     }
 
     private PurchaseOffer offerCheck(Long id) {

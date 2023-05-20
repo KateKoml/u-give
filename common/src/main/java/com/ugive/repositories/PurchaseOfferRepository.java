@@ -15,6 +15,9 @@ public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Lo
 
     List<PurchaseOffer> findBySellerId(Long sellerId);
 
+    @Query("SELECT po FROM PurchaseOffer po WHERE po.isDeleted = true AND po.changed < :expirationDate")
+    List<PurchaseOffer> findExpiredOffers(Timestamp expirationDate);
+
     @Query("SELECT po FROM PurchaseOffer po JOIN po.productCategory pc JOIN po.productCondition pcn " +
             "WHERE po.isDeleted = false AND pc.categoryName LIKE %:categoryName% AND pcn.conditionName LIKE %:conditionName% " +
             "AND po.price BETWEEN :minPrice AND :maxPrice")
@@ -26,4 +29,12 @@ public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Lo
     @Modifying
     @Query("DELETE FROM PurchaseOffer po WHERE po.isDeleted = true AND po.changed < :expirationDate")
     void deleteExpiredOffer(@Param("expirationDate") Timestamp expirationDate);
+
+    @Modifying
+    @Query("DELETE FROM Favourite f WHERE f.purchaseOffer = :offer")
+    void deleteConnectedFavourite(@Param("offer") PurchaseOffer offer);
+
+    @Modifying
+    @Query("DELETE FROM Payment p WHERE p.offer = :offer")
+    void deleteConnectedPayment(@Param("offer") PurchaseOffer offer);
 }
