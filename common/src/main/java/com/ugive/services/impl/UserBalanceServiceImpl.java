@@ -29,15 +29,17 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     private final UserBalanceRepository userBalanceRepository;
 
     @Override
-    public Optional<UserBalance> create(UserBalanceRequest userBalanceDto) {
-        UserBalance userBalance = userBalanceMapper.toEntity(userBalanceDto);
-        return Optional.of(userBalanceRepository.save(userBalance));
+    @Transactional
+    public UserBalance create(UserBalanceRequest userBalanceRequest) {
+        UserBalance userBalance = userBalanceMapper.toEntity(userBalanceRequest);
+        return userBalanceRepository.save(userBalance);
     }
 
     @Override
-    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceDto) {
+    @Transactional
+    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = findOne(id);
-        userBalanceMapper.updateEntityFromRequest(userBalanceDto, userBalance);
+        userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
         return Optional.of(userBalanceRepository.save(userBalance));
     }
 
@@ -57,6 +59,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         UserBalance userBalance = findOne(id);
         userBalance.setDeleted(true);

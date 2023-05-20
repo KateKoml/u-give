@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserBalanceService {
-    Optional<UserBalance> create(UserBalanceRequest userBalanceRequest);
+    UserBalance create(UserBalanceRequest userBalanceRequest);
 
     Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceRequest);
 

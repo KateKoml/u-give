@@ -7,11 +7,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class UserRequest {
     @Size(min = 2, max = 20)
     @Pattern(regexp = "^[A-Z][a-z]*[A-Z]?[a-z]*$")

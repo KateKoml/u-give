@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<User> create(UserRequest userDto);
+    User create(UserRequest userDto);
 
-    Optional<User> update(Long id, UserRequest userDto);
+    User update(Long id, UserRequest userDto);
 
     Optional<User> setUserRole(Long userId, String roleName);
 

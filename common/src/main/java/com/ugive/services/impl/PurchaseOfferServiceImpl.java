@@ -102,7 +102,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         return Optional.of(offerRepository.save(offer));
     }
 
-    @Scheduled(cron = "0 */1 * * * *") // Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
     @Transactional
     public void deleteExpiredOffer() {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(5));
@@ -112,7 +112,6 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
             offerRepository.deleteConnectedPayment(offer);
             offerRepository.delete(offer);
         }
-       // offerRepository.deleteExpiredOffer(expirationDate);
     }
 
     private PurchaseOffer offerCheck(Long id) {

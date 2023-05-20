@@ -48,8 +48,8 @@ public class UserBalanceController {
     }
 
     @PostMapping("/balance")
-    public ResponseEntity<Optional<UserBalance>> createUserBalance(@Valid @RequestBody UserBalanceRequest userBalanceRequest) {
-        Optional<UserBalance> userBalance = userBalanceService.create(userBalanceRequest);
+    public ResponseEntity<UserBalance> createUserBalance(@Valid @RequestBody UserBalanceRequest userBalanceRequest) {
+        UserBalance userBalance = userBalanceService.create(userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
