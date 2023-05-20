@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Optional<User> create(UserRequest userRequest) {
-        validationCheck(userRequest);
+        //validationCheck(userRequest);
         User user = userMapper.toEntity(userRequest);
         Role userRole = roleRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("This role doesn't exist")); // получаем объект Role из БД
         user.getRoles().add(userRole);
@@ -53,26 +53,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> update(Long id, UserRequest userRequest) {
-        validationCheck(userRequest);
+      //  validationCheck(userRequest);
         User user = userCheck(id);
         userMapper.updateEntityFromRequest(userRequest, user);
         return Optional.of(userRepository.save(user));
     }
 
-    private void validationCheck(UserRequest userRequest) {
-        if (!nameValidation(userRequest.getUserName()) || !nameValidation(userRequest.getSurname())) {
-            throw new UserValidationException("Try another name. Example: Jack, Katerine.");
-        } else if (!emailValidation(userRequest.getEmail())) {
-            throw new UserValidationException("This e-mail doesn't exist!");
-        } else if (!phoneValidation(userRequest.getPhone())) {
-            throw new UserValidationException("This phone doesn't exist!");
-        } else if (!passwordValidation(userRequest.getPassword())) {
-            throw new UserValidationException("The password must be at least 6 characters (maximum 16 characters)" +
-                    " and contains numbers, lowercase and uppercase letters.");
-        } else if (!loginValidation(userRequest.getLogin())) {
-            throw new UserValidationException("Try another login with numbers, letters, \"_\" and \"-\"");
-        }
-    }
+//    private void validationCheck(UserRequest userRequest) {
+//        if (!nameValidation(userRequest.getUserName()) || !nameValidation(userRequest.getSurname())) {
+//            throw new UserValidationException("Try another name. Example: Jack, Katerine.");
+//        } else if (!emailValidation(userRequest.getEmail())) {
+//            throw new UserValidationException("This e-mail doesn't exist!");
+//        } else if (!phoneValidation(userRequest.getPhone())) {
+//            throw new UserValidationException("This phone doesn't exist!");
+//        } else if (!passwordValidation(userRequest.getPassword())) {
+//            throw new UserValidationException("The password must be at least 6 characters (maximum 16 characters)" +
+//                    " and contains numbers, lowercase and uppercase letters.");
+//        } else if (!loginValidation(userRequest.getLogin())) {
+//            throw new UserValidationException("Try another login with numbers, letters, \"_\" and \"-\"");
+//        }
+//    }
 
     @Override
     public Optional<User> setUserRole(Long userId, String roleName) {
@@ -154,38 +154,38 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public boolean nameValidation(String name) {
-        final String NAME_PATTERN = "^[A-Z][a-z]*[A-Z]?[a-z]*$";
-        pattern = Pattern.compile(NAME_PATTERN);
-        matcher = pattern.matcher(name);
-        return matcher.matches();
-    }
-
-    public boolean emailValidation(String email) {
-        final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$";
-        pattern = Pattern.compile(EMAIL_PATTERN);
-        matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    public boolean phoneValidation(String phone) {
-        final String PHONE_PATTERN = "^(375|80)(29|25|33|44)(\\d{3})(\\d{2})(\\d{2})$";
-        pattern = Pattern.compile(PHONE_PATTERN);
-        matcher = pattern.matcher(phone);
-        return matcher.matches();
-    }
-
-    public boolean passwordValidation(String password) {
-        final String PASSWORD_PATTERN = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$";
-        pattern = Pattern.compile(PASSWORD_PATTERN);
-        matcher = pattern.matcher(password);
-        return matcher.matches();
-    }
-
-    public boolean loginValidation(String login) {
-        final String LOGIN_VALIDATION = "^[a-zA-Z0-9_-]{3,16}$";
-        pattern = Pattern.compile(LOGIN_VALIDATION);
-        matcher = pattern.matcher(login);
-        return matcher.matches();
-    }
+//    public boolean nameValidation(String name) {
+//        final String NAME_PATTERN = "^[A-Z][a-z]*[A-Z]?[a-z]*$";
+//        pattern = Pattern.compile(NAME_PATTERN);
+//        matcher = pattern.matcher(name);
+//        return matcher.matches();
+//    }
+//
+//    public boolean emailValidation(String email) {
+//        final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+.[A-Za-z]{2,}$";
+//        pattern = Pattern.compile(EMAIL_PATTERN);
+//        matcher = pattern.matcher(email);
+//        return matcher.matches();
+//    }
+//
+//    public boolean phoneValidation(String phone) {
+//        final String PHONE_PATTERN = "^(375|80)(29|25|33|44)(\\d{3})(\\d{2})(\\d{2})$";
+//        pattern = Pattern.compile(PHONE_PATTERN);
+//        matcher = pattern.matcher(phone);
+//        return matcher.matches();
+//    }
+//
+//    public boolean passwordValidation(String password) {
+//        final String PASSWORD_PATTERN = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$";
+//        pattern = Pattern.compile(PASSWORD_PATTERN);
+//        matcher = pattern.matcher(password);
+//        return matcher.matches();
+//    }
+//
+//    public boolean loginValidation(String login) {
+//        final String LOGIN_VALIDATION = "^[a-zA-Z0-9_-]{3,16}$";
+//        pattern = Pattern.compile(LOGIN_VALIDATION);
+//        matcher = pattern.matcher(login);
+//        return matcher.matches();
+//    }
 }

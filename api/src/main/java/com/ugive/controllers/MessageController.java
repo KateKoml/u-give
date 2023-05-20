@@ -38,14 +38,6 @@ public class MessageController {
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-//    @GetMapping("/chats/messages")
-//    public ResponseEntity<List<Message>> findAll(
-//            @RequestParam(value = "page", defaultValue = "0") int page,
-//            @RequestParam(value = "size", defaultValue = "10") int size) {
-//        List<Message> messages = messageService.findAll(page, size);
-//        return new ResponseEntity<>(messages, HttpStatus.OK);
-//    }
-
     @GetMapping("/chats/messages/{id}")
     public ResponseEntity<Message> getMessageById(@PathVariable Long id) {
         Message message = messageService.findOne(id);
