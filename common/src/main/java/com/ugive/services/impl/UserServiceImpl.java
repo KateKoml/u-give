@@ -1,9 +1,7 @@
 package com.ugive.services.impl;
 
-import com.ugive.requests.UserRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
-import com.ugive.exceptions.UserValidationException;
 import com.ugive.mappers.UserMapper;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.models.Role;
@@ -13,9 +11,9 @@ import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.RoleRepository;
 import com.ugive.repositories.UserBalanceRepository;
 import com.ugive.repositories.UserRepository;
+import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -53,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> update(Long id, UserRequest userRequest) {
-      //  validationCheck(userRequest);
+        //  validationCheck(userRequest);
         User user = userCheck(id);
         userMapper.updateEntityFromRequest(userRequest, user);
         return Optional.of(userRepository.save(user));
@@ -82,6 +80,7 @@ public class UserServiceImpl implements UserService {
         return Optional.of(userRepository.save(user));
     }
 
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }

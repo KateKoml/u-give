@@ -11,8 +11,6 @@ public interface MessageService {
 
     Optional<Message> update(Long id, MessageRequest messageRequest);
 
-    List<Message> findAll(int page, int size);
-
     List<Message> findAll();
 
     List<Message> findAllForOneUser(Long userId);

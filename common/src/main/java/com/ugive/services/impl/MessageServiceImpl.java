@@ -50,19 +50,8 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> findAll(int page, int size) {
-        Page<Message> messagesPage = messageRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
-        return messagesPage.getContent().stream()
-                .filter(message -> !message.isDeleted())
-                .toList();
-    }
-
-    @Override
     public List<Message> findAll() {
-        List<Message> messages = messageRepository.findAll();
-        return messages.stream()
-                .filter(message -> !message.isDeleted())
-                .toList();
+        return messageRepository.findAll();
     }
 
     @Override

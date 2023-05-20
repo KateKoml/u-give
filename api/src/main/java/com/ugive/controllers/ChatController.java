@@ -27,10 +27,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping("/chats")
-    public ResponseEntity<List<Chat>> findAll(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Chat> chats = chatService.findAll(page, size);
+    public ResponseEntity<List<Chat>> findAll() {
+        List<Chat> chats = chatService.findAll();
         return new ResponseEntity<>(chats, HttpStatus.OK);
     }
 

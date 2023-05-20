@@ -11,8 +11,6 @@ public interface ChatService {
 
     Optional<Chat> update(Long id, ChatRequest chatRequest);
 
-    List<Chat> findAll(int page, int size);
-
     List<Chat> findAll();
 
     Chat findOne(Long id);

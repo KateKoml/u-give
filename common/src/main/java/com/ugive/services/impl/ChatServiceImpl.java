@@ -48,12 +48,6 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public List<Chat> findAll(int page, int size) {
-        Page<Chat> chatsPage = chatRepository.findAll(PageRequest.of(page, size, Sort.by("created")));
-        return chatsPage.getContent().stream().toList();
-    }
-
-    @Override
     public List<Chat> findAll() {
         return chatRepository.findAll();
     }

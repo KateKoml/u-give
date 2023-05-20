@@ -12,6 +12,7 @@ public interface PurchaseOfferService {
     Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest);
 
     List<PurchaseOffer> findAll(int page, int size);
+    List<PurchaseOffer> findByUserId(Long sellerId);
 
     List<PurchaseOffer> findAll();
 

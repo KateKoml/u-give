@@ -13,7 +13,7 @@ public class CacheConfiguration {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("c_offer_status", "c_payment_type",
-                "c_product_categories", "c_product_conditions", "l_users_roles", "purchase_offers", "users");
+                "c_product_categories", "c_product_conditions", "roles", "users");
         cacheManager.setCaffeine(cacheProperties());
         return cacheManager;
     }
@@ -22,7 +22,7 @@ public class CacheConfiguration {
         return Caffeine.newBuilder()
                 .initialCapacity(30)
                 .maximumSize(2000)
-                .expireAfterAccess(15, TimeUnit.MINUTES)
+                .expireAfterAccess(60, TimeUnit.MINUTES)
                 .weakKeys()
                 .recordStats();
     }

@@ -1,6 +1,5 @@
 package com.ugive.services.impl;
 
-import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
@@ -8,6 +7,7 @@ import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.OfferStatusRepository;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.services.PurchaseOfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,9 +49,14 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         return offersPage.getContent().stream().toList();
     }
 
+    @Override
     public List<PurchaseOffer> findAll() {
-        List<PurchaseOffer> offers = offerRepository.findAll();
-        return offers.stream().toList();
+        return offerRepository.findAll();
+    }
+
+    @Override
+    public List<PurchaseOffer> findByUserId(Long sellerId) {
+        return offerRepository.findBySellerId(sellerId);
     }
 
     @Override

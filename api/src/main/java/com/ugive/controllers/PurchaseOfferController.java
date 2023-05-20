@@ -44,6 +44,12 @@ public class PurchaseOfferController {
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
+    @GetMapping("/users/{id}")
+    public ResponseEntity<List<PurchaseOffer>> getOfferBySellerId(@PathVariable Long id) {
+        List<PurchaseOffer> offers = purchaseOfferService.findByUserId(id);
+        return new ResponseEntity<>(offers, HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Optional<PurchaseOffer>> createOffer(@Valid @RequestBody PurchaseOfferRequest purchaseOfferRequest) {
         Optional<PurchaseOffer> purchaseOffer = purchaseOfferService.create(purchaseOfferRequest);

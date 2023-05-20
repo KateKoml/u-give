@@ -37,7 +37,6 @@ import java.util.Set;
 @Builder
 @Data
 @Entity
-@Cacheable("purchase_offers")
 @Table(name = "purchase_offers")
 public class PurchaseOffer {
     @Id
