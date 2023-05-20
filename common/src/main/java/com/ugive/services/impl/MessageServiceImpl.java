@@ -1,6 +1,5 @@
 package com.ugive.services.impl;
 
-import com.ugive.requests.MessageRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.MessageMapper;
@@ -8,11 +7,9 @@ import com.ugive.models.Chat;
 import com.ugive.models.Message;
 import com.ugive.repositories.ChatRepository;
 import com.ugive.repositories.MessageRepository;
+import com.ugive.requests.MessageRequest;
 import com.ugive.services.MessageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +28,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageMapper messageMapper;
 
     @Override
+    @Transactional
     public Optional<Message> create(MessageRequest messageDto) {
         Message message = messageMapper.toEntity(messageDto);
         Chat chat = chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found."));
@@ -43,6 +41,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
     public Optional<Message> update(Long id, MessageRequest messageDto) {
         Message message = messageCheck(id);
         messageMapper.updateEntityFromRequest(messageDto, message);
@@ -82,6 +81,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
     public Message markAsRead(Long id) {
         Message message = messageCheck(id);
         message.setIsRead(true);
@@ -94,6 +94,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         Message message = messageCheck(id);
         message.setDeleted(true);

@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(UserValidationException.class)
-    public ResponseEntity<ErrorObject> handleUserValidationException(UserValidationException ex, WebRequest request) {
+    @ExceptionHandler(ValidationCheckException.class)
+    public ResponseEntity<ErrorObject> handleUserValidationException(ValidationCheckException ex, WebRequest request) {
 
         ErrorObject errorObject = new ErrorObject();
 
