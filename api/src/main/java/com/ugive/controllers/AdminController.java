@@ -2,9 +2,13 @@ package com.ugive.controllers;
 
 import com.ugive.models.Role;
 import com.ugive.models.User;
+import com.ugive.models.catalogs.ProductCategory;
+import com.ugive.repositories.catalogs.ProductCategoryRepository;
 import com.ugive.requests.RoleRequest;
+import com.ugive.requests.catalogs.ProductCategoryRequest;
 import com.ugive.services.RoleService;
 import com.ugive.services.UserService;
+import com.ugive.services.catalogs.ProductCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +31,9 @@ import java.util.Optional;
 public class AdminController {
     private final RoleService roleService;
     private final UserService userService;
+
+    private final ProductCategoryRepository productCategoryRepository;
+    private final ProductCategoryService categoryService;
 
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> findAll() {
@@ -67,5 +74,23 @@ public class AdminController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<ProductCategory> create(@RequestBody ProductCategoryRequest productCategoryRequest) {
+        ProductCategory productCategory = categoryService.create(productCategoryRequest);
+        return new ResponseEntity<>(productCategory, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<ProductCategory> create(@PathVariable Integer id, @RequestBody ProductCategoryRequest productCategoryRequest) {
+        ProductCategory productCategory = categoryService.update(id, productCategoryRequest);
+        return new ResponseEntity<>(productCategory, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/categories{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        productCategoryRepository.deleteById(id);
+        return new ResponseEntity<>("Category was deleted.", HttpStatus.OK);
     }
 }

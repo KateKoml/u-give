@@ -52,6 +52,7 @@ public class FavouriteServiceImpl implements FavouriteService {
     public List<Favourite> findAll(int page, int size) {
         Page<Favourite> favouritePage = favouriteRepository.findAll(PageRequest.of(page, size, Sort.by("created").descending()));
         return favouritePage.getContent().stream()
+                .filter(favourite -> !favourite.isDeleted())
                 .toList();
     }
 
