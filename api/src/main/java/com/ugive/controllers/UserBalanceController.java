@@ -53,16 +53,16 @@ public class UserBalanceController {
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
-    @PutMapping("/balance/{id}/update")
+    @PutMapping("/balance/{id}")
     public ResponseEntity<Optional<UserBalance>> updateBalance(@PathVariable("id") Long id, @RequestBody UserBalanceRequest userBalanceRequest) {
         Optional<UserBalance> userBalance = userBalanceService.update(id, userBalanceRequest);
-        return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @PutMapping("/balance/{id}/deposit")
     public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long id, @RequestParam BigDecimal newMoney) {
         UserBalance userBalance = userBalanceService.topUpBalance(id, newMoney);
-        return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @PutMapping("/balance/{id}/send")
@@ -70,7 +70,7 @@ public class UserBalanceController {
                                                          @RequestParam Long idSecondUser,
                                                          @RequestParam BigDecimal newMoney) {
         UserBalance userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
-        return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
+        return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
     @DeleteMapping("/balance/{id}/delete")
