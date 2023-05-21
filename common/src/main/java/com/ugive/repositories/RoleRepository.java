@@ -8,6 +8,5 @@ import java.util.Optional;
 
 @Cacheable("roles")
 public interface RoleRepository extends JpaRepository<Role, Integer> {
-
     Optional<Role> findByRoleName(String roleName);
 }

@@ -29,6 +29,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMapper chatMapper;
 
     @Override
+    @Transactional
     public Optional<Chat> create(ChatRequest chatRequest) {
         Chat chat = chatMapper.toEntity(chatRequest);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
@@ -38,6 +39,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public Optional<Chat> update(Long id, ChatRequest chatRequest) {
         Chat chat = chatCheck(id);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
@@ -64,6 +66,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         Chat chat = chatCheck(id);
         chat.setDeleted(true);

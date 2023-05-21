@@ -36,12 +36,14 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
 
     @Override
+    @Transactional
     public Optional<Payment> create(PaymentRequest paymentDto) {
         Payment payment = paymentMapper.toEntity(paymentDto);
         return Optional.of(paymentRepository.save(payment));
     }
 
     @Override
+    @Transactional
     public Optional<Payment> update(Long id, PaymentRequest paymentDto) {
         Payment payment = paymentCheck(id);
         paymentMapper.updateEntityFromRequest(paymentDto, payment);
@@ -86,6 +88,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public void markAsDeleted(Long id) {
         Payment payment = paymentCheck(id);
         payment.setDeleted(true);

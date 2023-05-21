@@ -1,5 +1,6 @@
 package com.ugive.services.impl;
 
+import com.ugive.models.User;
 import com.ugive.requests.UserBalanceRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
@@ -29,22 +30,28 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     private final UserBalanceRepository userBalanceRepository;
 
     @Override
-    public Optional<UserBalance> create(UserBalanceRequest userBalanceDto) {
-        UserBalance userBalance = userBalanceMapper.toEntity(userBalanceDto);
-        return Optional.of(userBalanceRepository.save(userBalance));
+    @Transactional
+    public UserBalance create(UserBalanceRequest userBalanceRequest) {
+        UserBalance userBalance = userBalanceMapper.toEntity(userBalanceRequest);
+        return userBalanceRepository.save(userBalance);
     }
 
     @Override
-    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceDto) {
+    @Transactional
+    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = findOne(id);
-        userBalanceMapper.updateEntityFromRequest(userBalanceDto, userBalance);
+        userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
         return Optional.of(userBalanceRepository.save(userBalance));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserBalance> findAll(int page, int size) {
-        Page<UserBalance> userBalances = userBalanceRepository.findAll(PageRequest.of(page, size, Sort.by("id")));
-        return userBalances.getContent().stream().toList();
+        Page<UserBalance> userBalances = userBalanceRepository.findAll(PageRequest.of(page, size, Sort.by("id").ascending()));
+        return userBalances.getContent()
+                .stream()
+                .filter(user -> !user.isDeleted())
+                .toList();
     }
 
     @Override
@@ -57,6 +64,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     }
 
     @Override
+    @Transactional
     public void softDelete(Long id) {
         UserBalance userBalance = findOne(id);
         userBalance.setDeleted(true);
