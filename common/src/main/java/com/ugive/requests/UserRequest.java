@@ -23,7 +23,7 @@ public class UserRequest {
     @Pattern(message = "User name should be from 2 to 20 characters.",
             regexp = "^[A-Z][a-z]*[A-Z]?[a-z]*$")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Kate",
-            type = "string", description = "User's name")
+            type = "string", description = "User name")
     @NotNull
     private String userName;
 
@@ -31,12 +31,12 @@ public class UserRequest {
     @Pattern(message = "Surname should be from 2 to 30 characters.",
             regexp = "^[A-Z][a-z]*[A-Z]?[a-z]*$")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Komleva",
-            type = "string", description = "User's surname")
+            type = "string", description = "User surname")
     @NotNull
     private String surname;
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "FEMALE",
-            type = "Gender", description = "User's gender")
+            type = "Gender", description = "User gender")
     @NotNull
     private Gender gender;
 
@@ -51,7 +51,7 @@ public class UserRequest {
     @Size(min = 7, max = 50)
     @Email(message = "Invalid email.")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "komlevakate99@gmail.com",
-            type = "string", description = "User's email")
+            type = "string", description = "User email")
     @NotNull
     private String email;
 
@@ -59,7 +59,7 @@ public class UserRequest {
     @Pattern(message = "Login should be from 3 to 30 characters.",
             regexp = "^[a-zA-Z0-9_-]{3,20}$")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "KateKomleva99",
-            type = "string", description = "User's login")
+            type = "string", description = "User login")
     @NotNull
     private String login;
 
@@ -67,7 +67,7 @@ public class UserRequest {
     @Pattern(message = "Password should be from 6 to 20 characters, containing numbers, lowercase and uppercase letters.",
             regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "fyjhhk57FHg",
-            type = "string", description = "User's password")
+            type = "string", description = "User password")
     @NotNull
     private String password;
 }

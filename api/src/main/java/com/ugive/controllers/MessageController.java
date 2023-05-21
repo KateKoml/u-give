@@ -1,5 +1,6 @@
 package com.ugive.controllers;
 
+import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.Message;
 import com.ugive.requests.MessageRequest;
 import com.ugive.services.MessageService;
@@ -7,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/rest/messages")
@@ -26,13 +29,24 @@ public class MessageController {
     private final MessageService messageService;
 
     @PostMapping
-    public ResponseEntity<Message> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
+    public ResponseEntity<Message> createMessage(@Valid @RequestBody MessageRequest messageRequest,
+                                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
+
         Message message = messageService.create(messageRequest);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Message> updateMessage(@PathVariable("id") Long id, @RequestBody MessageRequest messageRequest) {
+    public ResponseEntity<Message> updateMessage(@PathVariable("id") Long id, @Valid @RequestBody MessageRequest messageRequest,
+                                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
         Message message = messageService.update(id, messageRequest);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }

@@ -110,7 +110,7 @@ public class UserController {
 
     @Operation(
             summary = "Spring Data Create User",
-            description = "Create User with this params: user name, surname, gender, e-mail, phone, password",
+            description = "Create User with request body",
             responses = {
                     @ApiResponse(
                             responseCode = "CREATED",
@@ -139,7 +139,7 @@ public class UserController {
 
     @Operation(
             summary = "Spring Data Update User",
-            description = "Update User based on given parameters: user name, surname, gender, e-mail, phone, password",
+            description = "Update User based on given id and request body",
             responses = {
                     @ApiResponse(
                             responseCode = "OK",
@@ -211,7 +211,7 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Search users by given params",
+            summary = "Spring Data User Search by given params",
             description = "Search users by name, surname, gender or phone",
             parameters = {
                     @Parameter(name = "name",
@@ -247,7 +247,7 @@ public class UserController {
             @RequestParam(value = "gender", required = false) Gender gender,
             @RequestParam(value = "phone", required = false) String phone
     ) {
-        List<User> users = userService.searchByNameSurnameGender(name, surname, gender, phone);
+        List<User> users = userService.searchByNameSurnameGenderPhone(name, surname, gender, phone);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 }

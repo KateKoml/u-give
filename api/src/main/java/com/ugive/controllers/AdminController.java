@@ -1,5 +1,6 @@
 package com.ugive.controllers;
 
+import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.catalogs.ProductCategory;
@@ -9,9 +10,11 @@ import com.ugive.requests.catalogs.ProductCategoryRequest;
 import com.ugive.services.RoleService;
 import com.ugive.services.UserService;
 import com.ugive.services.catalogs.ProductCategoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -48,14 +52,24 @@ public class AdminController {
     }
 
     @PostMapping("/roles")
-    public ResponseEntity<Role> createRole(@RequestBody RoleRequest roleRequest) {
+    public ResponseEntity<Role> createRole(@Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
+
         Role createdRole = roleService.create(roleRequest);
         return new ResponseEntity<>(createdRole, HttpStatus.CREATED);
     }
 
     @PutMapping("/roles/{id}")
     public ResponseEntity<Role> updateRole(@PathVariable("id") Integer id,
-                                           @RequestBody RoleRequest roleRequest) {
+                                           @Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
+
         Role updatedRole = roleService.update(id, roleRequest);
         return new ResponseEntity<>(updatedRole, HttpStatus.OK);
     }
@@ -77,13 +91,24 @@ public class AdminController {
     }
 
     @PostMapping("/categories")
-    public ResponseEntity<ProductCategory> create(@RequestBody ProductCategoryRequest productCategoryRequest) {
+    public ResponseEntity<ProductCategory> createCategory(@Valid @RequestBody ProductCategoryRequest productCategoryRequest,
+                                                  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
         ProductCategory productCategory = categoryService.create(productCategoryRequest);
         return new ResponseEntity<>(productCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/categories/{id}")
-    public ResponseEntity<ProductCategory> create(@PathVariable Integer id, @RequestBody ProductCategoryRequest productCategoryRequest) {
+    public ResponseEntity<ProductCategory> updateCategory(@PathVariable Integer id,
+                                                  @Valid @RequestBody ProductCategoryRequest productCategoryRequest,
+                                                  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
+            throw new ValidationCheckException(errorMessage);
+        }
         ProductCategory productCategory = categoryService.update(id, productCategoryRequest);
         return new ResponseEntity<>(productCategory, HttpStatus.OK);
     }

@@ -18,7 +18,7 @@ public interface UserService {
     List<User> findAll();
 
     User findOne(Long id);
-    List<User> searchByNameSurnameGender(String name, String surname, Gender gender, String phone);
+    List<User> searchByNameSurnameGenderPhone(String name, String surname, Gender gender, String phone);
 
     void softDelete(Long id);
 

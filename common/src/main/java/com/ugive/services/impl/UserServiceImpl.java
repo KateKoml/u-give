@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> searchByNameSurnameGender(String name, String surname, Gender gender, String phone) {
+    public List<User> searchByNameSurnameGenderPhone(String name, String surname, Gender gender, String phone) {
         return userRepository.searchByNameSurnameGender(name, surname, gender, phone);
     }
 

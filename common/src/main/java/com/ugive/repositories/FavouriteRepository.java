@@ -14,8 +14,6 @@ import java.util.Optional;
 public interface FavouriteRepository extends JpaRepository<Favourite, Long> {
     Page<Favourite> findAllByUserId(Long userId, Pageable pageable);
 
-    Optional<Favourite> findByIdAndUserId(Long id, Long userId);
-
     @Modifying
     @Query("DELETE FROM Favourite f WHERE f.isDeleted = true AND f.changed < :expirationDate")
     void deleteExpiredFavourite(@Param("expirationDate") Timestamp expirationDate);

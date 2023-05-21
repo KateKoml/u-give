@@ -15,10 +15,15 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Validated
-@Schema(description = "User Balance Request")
+@Schema(description = "User Balance Request with fields person and money")
 public class UserBalanceRequest {
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "1",
+            type = "number", description = "User id")
     @NotNull
     private Long person;
+
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "0.00",
+            type = "number", description = "Money on balance")
     @NotNull
     private BigDecimal money;
 }
