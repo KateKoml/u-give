@@ -7,6 +7,7 @@ import com.ugive.models.PurchaseOffer;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.UserBalance;
+import com.ugive.models.enums.Gender;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.RoleRepository;
 import com.ugive.repositories.UserBalanceRepository;
@@ -71,8 +72,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll() {
-        //Sort sort = Sort.by("id").ascending();
-        return userRepository.findAll();
+        Sort sort = Sort.by("id").ascending();
+        return userRepository.findAll(sort);
     }
 
     @Override
@@ -88,6 +89,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findOne(Long id) {
         return userCheck(id);
+    }
+
+    @Override
+    public List<User> searchByNameSurnameGender(String name, String surname, Gender gender, String phone) {
+        return userRepository.searchByNameSurnameGender(name, surname, gender, phone);
     }
 
     @Override

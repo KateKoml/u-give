@@ -1,6 +1,7 @@
 package com.ugive.repositories;
 
 import com.ugive.models.User;
+import com.ugive.models.enums.Gender;
 import lombok.NonNull;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -32,6 +33,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Cacheable("users")
     @NonNull
     List<User> findAll(Sort sort);
+
+    @Query("SELECT u FROM User u WHERE " +
+            "LOWER(u.userName) LIKE LOWER(CONCAT('%', :name, '%')) OR " +
+            "LOWER(u.surname) LIKE LOWER(CONCAT('%', :surname, '%')) OR " +
+            "u.gender = :gender OR " +
+            "u.phone LIKE CONCAT('%', :phone, '%')")
+    List<User> searchByNameSurnameGender(
+            @Param("name") String name,
+            @Param("surname") String surname,
+            @Param("gender") Gender gender,
+            @Param("phone") String phone);
 
     //сделать для админа
 //    @Cacheable("l_users_roles")

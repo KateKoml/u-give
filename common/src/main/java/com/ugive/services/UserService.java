@@ -1,6 +1,6 @@
 package com.ugive.services;
 
-import com.ugive.models.PurchaseOffer;
+import com.ugive.models.enums.Gender;
 import com.ugive.requests.UserRequest;
 import com.ugive.models.User;
 
@@ -18,6 +18,7 @@ public interface UserService {
     List<User> findAll();
 
     User findOne(Long id);
+    List<User> searchByNameSurnameGender(String name, String surname, Gender gender, String phone);
 
     void softDelete(Long id);
 
