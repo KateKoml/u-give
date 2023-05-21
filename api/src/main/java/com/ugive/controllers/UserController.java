@@ -24,22 +24,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("rest/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/paging")
+    @GetMapping
     public ResponseEntity<List<User>> findAllByPage(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
         List<User> users = userService.findAll(page, size);
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        List<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
