@@ -21,5 +21,5 @@ public interface UserService {
 
     void softDelete(Long id);
 
-    Optional<User> resetAccount(Long id);
+    User resetAccount(Long id);
 }

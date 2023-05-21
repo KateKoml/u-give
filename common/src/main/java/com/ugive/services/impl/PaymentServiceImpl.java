@@ -37,17 +37,17 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public Optional<Payment> create(PaymentRequest paymentDto) {
-        Payment payment = paymentMapper.toEntity(paymentDto);
-        return Optional.of(paymentRepository.save(payment));
+    public Payment create(PaymentRequest paymentRequest) {
+        Payment payment = paymentMapper.toEntity(paymentRequest);
+        return paymentRepository.save(payment);
     }
 
     @Override
     @Transactional
-    public Optional<Payment> update(Long id, PaymentRequest paymentDto) {
+    public Payment update(Long id, PaymentRequest paymentRequest) {
         Payment payment = paymentCheck(id);
-        paymentMapper.updateEntityFromRequest(paymentDto, payment);
-        return Optional.of(paymentRepository.save(payment));
+        paymentMapper.updateEntityFromRequest(paymentRequest, payment);
+        return paymentRepository.save(payment);
     }
 
     @Override
@@ -73,10 +73,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public Optional<Payment> makePayment(Long purchaseOfferId, String type, Long customerId) {
+    public Payment makePayment(Long purchaseOfferId, String type, Long customerId) {
         PurchaseOffer offer = offerRepository.findById(purchaseOfferId).orElseThrow(() -> new EntityNotFoundException("Offer not found"));
         PaymentType paymentType = typeRepository.findByType(type).orElseThrow(() -> new EntityNotFoundException("This type not available"));
-        PaymentRequest paymentDto = new PaymentRequest(purchaseOfferId, paymentType.getId());
+        PaymentRequest paymentRequest = new PaymentRequest(purchaseOfferId, paymentType.getId());
 
         // 3 = digital wallet
         if (paymentType.getId() == 3) {
@@ -84,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
             offerService.markAsSoldOffers(purchaseOfferId, customerId);
         }
 
-        return create(paymentDto);
+        return create(paymentRequest);
     }
 
     @Override

@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Optional<User> resetAccount(Long id) {
+    public User resetAccount(Long id) {
         User user = userCheck(id);
         UserBalance userBalance = userBalanceRepository.findByUserId(id);
 
@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
                 offerRepository.save(offer);
             }
         }
-        return Optional.of(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута

@@ -32,20 +32,20 @@ public class FavouriteServiceImpl implements FavouriteService {
 
     @Override
     @Transactional
-    public Optional<Favourite> create(FavouriteRequest favouriteRequest) {
+    public Favourite create(FavouriteRequest favouriteRequest) {
         Favourite favourite = favouriteMapper.toEntity(favouriteRequest);
-        return Optional.of(favouriteRepository.save(favourite));
+        return favouriteRepository.save(favourite);
     }
 
     @Override
     @Transactional
-    public Optional<Favourite> update(Long id, FavouriteRequest favouriteRequest) {
+    public Favourite update(Long id, FavouriteRequest favouriteRequest) {
         Favourite favourite = favouriteCheck(id);
         if (favourite.isDeleted()) {
             throw new ForbiddenChangeException("Offer is deleted from Favourites");
         }
         favouriteMapper.updateEntityFromRequest(favouriteRequest, favourite);
-        return Optional.of(favouriteRepository.save(favourite));
+        return favouriteRepository.save(favourite);
     }
 
     @Override
@@ -62,11 +62,9 @@ public class FavouriteServiceImpl implements FavouriteService {
 
     @Override
     @Transactional
-    public void softDelete(Long id) {
+    public void delete(Long id) {
         Favourite favourite = favouriteCheck(id);
-        favourite.setDeleted(true);
-        favourite.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        favouriteRepository.save(favourite);
+        favouriteRepository.delete(favourite);
     }
 
     @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
@@ -88,9 +86,9 @@ public class FavouriteServiceImpl implements FavouriteService {
     }
 
     @Override
-    public PurchaseOffer getPurchaseOfferByFavouriteId(Long userId, Long favouriteId) {
-        Favourite favourite = favouriteRepository.findByIdAndUserId(favouriteId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("User " + userId + " with favourite " + favouriteId + " not found."));
+    public PurchaseOffer getPurchaseOfferByFavouriteId(Long favouriteId) {
+        Favourite favourite = favouriteRepository.findById(favouriteId)
+                .orElseThrow(() -> new EntityNotFoundException("Favourite " + favouriteId + " not found."));
         return favourite.getPurchaseOffer();
     }
 

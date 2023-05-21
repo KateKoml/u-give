@@ -1,15 +1,14 @@
 package com.ugive.controllers;
 
-import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
+import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.services.PurchaseOfferService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/offers")
+@RequestMapping("/rest/offers")
 @RequiredArgsConstructor
 public class PurchaseOfferController {
     private final PurchaseOfferRepository purchaseOfferRepository;
@@ -51,15 +49,15 @@ public class PurchaseOfferController {
     }
 
     @PostMapping
-    public ResponseEntity<Optional<PurchaseOffer>> createOffer(@Valid @RequestBody PurchaseOfferRequest purchaseOfferRequest) {
-        Optional<PurchaseOffer> purchaseOffer = purchaseOfferService.create(purchaseOfferRequest);
+    public ResponseEntity<PurchaseOffer> createOffer(@Valid @RequestBody PurchaseOfferRequest purchaseOfferRequest) {
+        PurchaseOffer purchaseOffer = purchaseOfferService.create(purchaseOfferRequest);
         return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}/update")
-    public ResponseEntity<Optional<PurchaseOffer>> updateOffer(@PathVariable("id") Long id, @RequestBody PurchaseOfferRequest purchaseOfferRequest) {
-        Optional<PurchaseOffer> purchaseOffer = purchaseOfferService.update(id, purchaseOfferRequest);
-        return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
+    @PutMapping("/{id}")
+    public ResponseEntity<PurchaseOffer> updateOffer(@PathVariable("id") Long id, @RequestBody PurchaseOfferRequest purchaseOfferRequest) {
+        PurchaseOffer purchaseOffer = purchaseOfferService.update(id, purchaseOfferRequest);
+        return new ResponseEntity<>(purchaseOffer, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -69,20 +67,18 @@ public class PurchaseOfferController {
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<PurchaseOffer>> restoreOffer(@PathVariable("id") Long id) {
-        Optional<PurchaseOffer> offer = purchaseOfferService.resetOffer(id);
+    public ResponseEntity<PurchaseOffer> restoreOffer(@PathVariable("id") Long id) {
+        PurchaseOffer offer = purchaseOfferService.resetOffer(id);
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
     @GetMapping("/search")
-    public String searchByName(@RequestParam(name = "productName") String productName,
-                               Model model) {
+    public ResponseEntity<List<PurchaseOffer>> searchByName(@RequestParam(name = "productName") String productName) {
         List<PurchaseOffer> purchaseOffers = purchaseOfferRepository.findByProductNameContainingIgnoreCase(productName);
-        model.addAttribute("purchaseOffers", purchaseOffers);
-        return "offers-search-results";
+        return new ResponseEntity<>(purchaseOffers, HttpStatus.OK);
     }
 
-    @GetMapping("/search_by_criteria")
+    @GetMapping("/search/parameters")
     public ResponseEntity<List<PurchaseOffer>> search(@RequestParam(name = "categoryName") String categoryName,
                                                       @RequestParam(name = "conditionName") String conditionName,
                                                       @RequestParam(name = "minPrice") BigDecimal minPrice,

@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PurchaseOfferService {
-    Optional<PurchaseOffer> create(PurchaseOfferRequest offerRequest);
+    PurchaseOffer create(PurchaseOfferRequest offerRequest);
 
-    Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest);
+    PurchaseOffer update(Long id, PurchaseOfferRequest offerRequest);
 
     List<PurchaseOffer> findAll(int page, int size);
     List<PurchaseOffer> findByUserId(Long sellerId);
@@ -22,5 +22,5 @@ public interface PurchaseOfferService {
 
     void softDelete(Long id);
 
-    Optional<PurchaseOffer> resetOffer(Long id);
+    PurchaseOffer resetOffer(Long id);
 }

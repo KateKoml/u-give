@@ -35,4 +35,12 @@ public class MainController {
         model.addAttribute("offers", offers);
         return "search-results";
     }
+
+    @GetMapping("/offers/search")
+    public String searchByName(@RequestParam(name = "productName") String productName,
+                               Model model) {
+        List<PurchaseOffer> purchaseOffers = purchaseOfferRepository.findByProductNameContainingIgnoreCase(productName);
+        model.addAttribute("purchaseOffers", purchaseOffers);
+        return "offers-search-results";
+    }
 }

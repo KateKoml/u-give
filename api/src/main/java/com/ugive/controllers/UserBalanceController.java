@@ -1,7 +1,7 @@
 package com.ugive.controllers;
 
-import com.ugive.requests.UserBalanceRequest;
 import com.ugive.models.UserBalance;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.services.UserBalanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/rest/balances")
 @RequiredArgsConstructor
 public class UserBalanceController {
     private final UserBalanceService userBalanceService;
 
-    @GetMapping("/balance")
+    @GetMapping
     public ResponseEntity<List<UserBalance>> findAll(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -35,37 +34,37 @@ public class UserBalanceController {
         return new ResponseEntity<>(userBalances, HttpStatus.OK);
     }
 
-    @GetMapping("/balance/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<UserBalance> getBalanceById(@PathVariable Long id) {
         UserBalance userBalance = userBalanceService.findOne(id);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/balance")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<UserBalance> getBalanceByUserId(@PathVariable Long userId) {
         UserBalance userBalance = userBalanceService.getBalanceByUserId(userId);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @PostMapping("/balance")
+    @PostMapping
     public ResponseEntity<UserBalance> createUserBalance(@Valid @RequestBody UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = userBalanceService.create(userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.CREATED);
     }
 
-    @PutMapping("/balance/{id}")
-    public ResponseEntity<Optional<UserBalance>> updateBalance(@PathVariable("id") Long id, @RequestBody UserBalanceRequest userBalanceRequest) {
-        Optional<UserBalance> userBalance = userBalanceService.update(id, userBalanceRequest);
+    @PutMapping("/{id}")
+    public ResponseEntity<UserBalance> updateBalance(@PathVariable("id") Long id, @RequestBody UserBalanceRequest userBalanceRequest) {
+        UserBalance userBalance = userBalanceService.update(id, userBalanceRequest);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @PutMapping("/balance/{id}/deposit")
+    @PutMapping("/{id}/deposit")
     public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long id, @RequestParam BigDecimal newMoney) {
         UserBalance userBalance = userBalanceService.topUpBalance(id, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @PutMapping("/balance/{id}/send")
+    @PutMapping("/users/{id}/send")
     public ResponseEntity<UserBalance> putMoneyOnBalance(@PathVariable("id") Long idFirstUser,
                                                          @RequestParam Long idSecondUser,
                                                          @RequestParam BigDecimal newMoney) {
@@ -73,7 +72,7 @@ public class UserBalanceController {
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
 
-    @DeleteMapping("/balance/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteBalance(@PathVariable("id") Long id) {
         userBalanceService.softDelete(id);
         return new ResponseEntity<>("This balance is deleted.", HttpStatus.OK);

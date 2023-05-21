@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FavouriteService {
-    Optional<Favourite> create(FavouriteRequest favouriteRequest);
+    Favourite create(FavouriteRequest favouriteRequest);
 
-    Optional<Favourite> update(Long id, FavouriteRequest favouriteRequest);
+    Favourite update(Long id, FavouriteRequest favouriteRequest);
 
     List<Favourite> findAll(int page, int size);
 
     Favourite findOne(Long id);
 
-    void softDelete(Long id);
+    void delete(Long id);
 
     List<PurchaseOffer> getFavouritePurchaseOffersForUser(Long userId, int page, int size);
 
-    PurchaseOffer getPurchaseOfferByFavouriteId(Long userId, Long favouriteId);
+    PurchaseOffer getPurchaseOfferByFavouriteId(Long favouriteId);
 }

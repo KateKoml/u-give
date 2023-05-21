@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MessageService {
-    Optional<Message> create(MessageRequest messageRequest);
+    Message create(MessageRequest messageRequest);
 
-    Optional<Message> update(Long id, MessageRequest messageRequest);
+    Message update(Long id, MessageRequest messageRequest);
 
     List<Message> findAll();
 

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PaymentService {
-    Optional<Payment> create(PaymentRequest paymentRequest);
+    Payment create(PaymentRequest paymentRequest);
 
-    Optional<Payment> makePayment (Long purchaseOfferId, String type, Long customerId);
+    Payment makePayment (Long purchaseOfferId, String type, Long customerId);
 
-    Optional<Payment> update(Long id, PaymentRequest paymentRequest);
+    Payment update(Long id, PaymentRequest paymentRequest);
 
     List<Payment> findAll(int page, int size);
 

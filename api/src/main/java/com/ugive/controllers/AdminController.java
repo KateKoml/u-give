@@ -1,17 +1,13 @@
 package com.ugive.controllers;
 
-import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.requests.RoleRequest;
-import com.ugive.requests.UserRequest;
 import com.ugive.services.RoleService;
 import com.ugive.services.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -64,7 +59,7 @@ public class AdminController {
         return new ResponseEntity<>("Role was deleted", HttpStatus.OK);
     }
 
-    @PostMapping("/roles/set_role/users/{userId}")
+    @PostMapping("/roles/set/users/{userId}")
     public ResponseEntity<User> setUserRole(@PathVariable Long userId, @RequestParam String roleName) {
         Optional<User> user = userService.setUserRole(userId, roleName);
         if (user.isPresent()) {

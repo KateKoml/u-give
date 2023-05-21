@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatService {
-    Optional<Chat> create(ChatRequest chatRequest);
+    Chat create(ChatRequest chatRequest);
 
-    Optional<Chat> update(Long id, ChatRequest chatRequest);
+    Chat update(Long id, ChatRequest chatRequest);
 
     List<Chat> findAll();
 

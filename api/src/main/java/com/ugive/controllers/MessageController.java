@@ -1,7 +1,7 @@
 package com.ugive.controllers;
 
-import com.ugive.requests.MessageRequest;
 import com.ugive.models.Message;
+import com.ugive.requests.MessageRequest;
 import com.ugive.services.MessageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,57 +18,56 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/rest/messages")
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
 
-    @PostMapping("/chats/messages")
-    public ResponseEntity<Optional<Message>> createMessage(@Valid @RequestBody MessageRequest messageDto) {
-        Optional<Message> message = messageService.create(messageDto);
+    @PostMapping
+    public ResponseEntity<Message> createMessage(@Valid @RequestBody MessageRequest messageRequest) {
+        Message message = messageService.create(messageRequest);
         return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
 
-    @PutMapping("/chats/messages/{id}/update")
-    public ResponseEntity<Optional<Message>> updateMessage(@PathVariable("id") Long id, @RequestBody MessageRequest messageDto) {
-        Optional<Message> message = messageService.update(id, messageDto);
-        return new ResponseEntity<>(message, HttpStatus.CREATED);
+    @PutMapping("/{id}")
+    public ResponseEntity<Message> updateMessage(@PathVariable("id") Long id, @RequestBody MessageRequest messageRequest) {
+        Message message = messageService.update(id, messageRequest);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @GetMapping("/chats/messages/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Message> getMessageById(@PathVariable Long id) {
         Message message = messageService.findOne(id);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/chats/messages")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<List<Message>> getAllUserMessages(@PathVariable Long userId) {
         List<Message> messages = messageService.findAllForOneUser(userId);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @GetMapping("/chats/{chatId}/messages")
+    @GetMapping("/chats/{chatId}")
     public ResponseEntity<List<Message>> getAllMessagesInChat(@PathVariable Long chatId) {
         List<Message> messages = messageService.showAllMessagesInChat(chatId);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @GetMapping("/chats/{chatId}/messages/search")
-    public ResponseEntity<List<Message>> getAllMessagesInChatByText(@PathVariable Long chatId, @RequestParam String text) {
+    @GetMapping("/chats/{chatId}/search")
+    public ResponseEntity<List<Message>> searchAllMessagesInChatByText(@PathVariable Long chatId, @RequestParam String text) {
         List<Message> messages = messageService.searchMessagesInChat(chatId, text);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
-    @PutMapping("/chats/messages/{id}/read")
+    @PutMapping("/{id}/read")
     public ResponseEntity<Message> markMessageAsRead(@PathVariable Long id) {
         Message message = messageService.markAsRead(id);
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
-    @DeleteMapping("/chats/messages/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMessage(@PathVariable("id") Long id) {
         messageService.softDelete(id);
         return new ResponseEntity<>("Message is deleted.", HttpStatus.OK);

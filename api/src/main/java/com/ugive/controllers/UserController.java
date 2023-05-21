@@ -1,8 +1,8 @@
 package com.ugive.controllers;
 
 import com.ugive.exceptions.ValidationCheckException;
-import com.ugive.requests.UserRequest;
 import com.ugive.models.User;
+import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("rest/users")
@@ -56,8 +55,8 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable("id") Long id,
-                                                     @Valid @RequestBody UserRequest userRequest,
-                                                     BindingResult bindingResult) {
+                                           @Valid @RequestBody UserRequest userRequest,
+                                           BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
             throw new ValidationCheckException(errorMessage);
@@ -73,18 +72,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/restore")
-    public ResponseEntity<Optional<User>> resetAccount(@PathVariable("id") Long id) {
-        Optional<User> user = userService.resetAccount(id);
+    public ResponseEntity<User> restoreAccount(@PathVariable("id") Long id) {
+        User user = userService.resetAccount(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PostMapping("/{userId}/set_role")
-    public ResponseEntity<User> setUserRole(@PathVariable Long userId, @RequestParam String roleName) {
-        Optional<User> user = userService.setUserRole(userId, roleName);
-        if (user.isPresent()) {
-            return new ResponseEntity<>(user.get(), HttpStatus.OK);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 }

@@ -30,28 +30,29 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional
-    public Optional<Chat> create(ChatRequest chatRequest) {
+    public Chat create(ChatRequest chatRequest) {
         Chat chat = chatMapper.toEntity(chatRequest);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
             throw new ModifyingChatException("This chat is already exists.");
         }
-        return Optional.of(chatRepository.save(chat));
+        return chatRepository.save(chat);
     }
 
     @Override
     @Transactional
-    public Optional<Chat> update(Long id, ChatRequest chatRequest) {
+    public Chat update(Long id, ChatRequest chatRequest) {
         Chat chat = chatCheck(id);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
             throw new ModifyingChatException("This chat is already exists.");
         }
         chatMapper.updateEntityFromRequest(chatRequest, chat);
-        return Optional.of(chatRepository.save(chat));
+        return chatRepository.save(chat);
     }
 
     @Override
     public List<Chat> findAll() {
-        return chatRepository.findAll();
+
+        return chatRepository.findAll().stream().filter(chat -> !chat.isDeleted()).toList();
     }
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface UserBalanceService {
     UserBalance create(UserBalanceRequest userBalanceRequest);
 
-    Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceRequest);
+    UserBalance update(Long id, UserBalanceRequest userBalanceRequest);
 
     List<UserBalance> findAll(int page, int size);
 

@@ -29,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public Optional<Message> create(MessageRequest messageDto) {
+    public Message create(MessageRequest messageDto) {
         Message message = messageMapper.toEntity(messageDto);
         Chat chat = chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found."));
 
@@ -37,15 +37,15 @@ public class MessageServiceImpl implements MessageService {
         if (!chat.getFirstUser().equals(message.getUser()) && !chat.getSecondUser().equals(message.getUser())) {
             throw new ForbiddenChangeException("This user is not a member of this chat");
         }
-        return Optional.of(messageRepository.save(message));
+        return messageRepository.save(message);
     }
 
     @Override
     @Transactional
-    public Optional<Message> update(Long id, MessageRequest messageDto) {
+    public Message update(Long id, MessageRequest messageDto) {
         Message message = messageCheck(id);
         messageMapper.updateEntityFromRequest(messageDto, message);
-        return Optional.of(messageRepository.save(message));
+        return messageRepository.save(message);
     }
 
     @Override

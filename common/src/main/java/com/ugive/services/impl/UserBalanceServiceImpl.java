@@ -38,10 +38,10 @@ public class UserBalanceServiceImpl implements UserBalanceService {
 
     @Override
     @Transactional
-    public Optional<UserBalance> update(Long id, UserBalanceRequest userBalanceRequest) {
+    public UserBalance update(Long id, UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = findOne(id);
         userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
-        return Optional.of(userBalanceRepository.save(userBalance));
+        return userBalanceRepository.save(userBalance);
     }
 
     @Override

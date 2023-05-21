@@ -30,21 +30,20 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     private final UserRepository userRepository;
     private final OfferStatusRepository statusRepository;
     private final PurchaseOfferMapper purchaseOfferMapper;
-    private final FavouriteRepository favouriteRepository;
 
     @Override
     @Transactional
-    public Optional<PurchaseOffer> create(PurchaseOfferRequest offerRequest) {
+    public PurchaseOffer create(PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = purchaseOfferMapper.toEntity(offerRequest);
-        return Optional.of(offerRepository.save(offer));
+        return offerRepository.save(offer);
     }
 
     @Override
     @Transactional
-    public Optional<PurchaseOffer> update(Long id, PurchaseOfferRequest offerRequest) {
+    public PurchaseOffer update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
         purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
-        return Optional.of(offerRepository.save(offer));
+        return offerRepository.save(offer);
     }
 
     @Override
@@ -92,14 +91,14 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     }
 
     @Override
-    public Optional<PurchaseOffer> resetOffer(Long id) {
+    public PurchaseOffer resetOffer(Long id) {
         PurchaseOffer offer = offerCheck(id);
         if (offer.isDeleted()) {
             offer.setDeleted(false);
             offer.setOfferStatus(statusRepository.findById(1).orElseThrow(() -> new EntityNotFoundException("This status doesn't exist")));
             offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         }
-        return Optional.of(offerRepository.save(offer));
+        return offerRepository.save(offer);
     }
 
     @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
