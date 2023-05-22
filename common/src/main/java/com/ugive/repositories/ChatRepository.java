@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
+    List<Chat> findAllByDeletedFalseOrderByCreated();
 
     Chat findByFirstUserAndSecondUser(User firstUser, User secondUser);
 

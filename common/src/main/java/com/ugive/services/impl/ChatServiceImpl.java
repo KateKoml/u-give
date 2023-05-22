@@ -52,7 +52,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> findAll() {
 
-        return chatRepository.findAll().stream().filter(chat -> !chat.isDeleted()).toList();
+        return chatRepository.findAllByDeletedFalseOrderByCreated();
     }
 
     @Override

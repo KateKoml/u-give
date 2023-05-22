@@ -30,8 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @NonNull
     Page<User> findAll(Pageable pageable);
 
-    @NonNull
-    List<User> findAll(Sort sort);
+    List<User> findAllByDeletedFalseOrderById();
 
     @Query("SELECT u FROM User u WHERE " +
             "LOWER(u.userName) LIKE LOWER(CONCAT('%', :name, '%')) OR " +

@@ -60,10 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<Payment> findAllForOneUser(Long userId) {
-        List<Payment> payments = paymentRepository.findByOfferCustomerId(userId);
-        return payments.stream()
-                .filter(payment -> !payment.isDeleted())
-                .sorted(Comparator.comparing(Payment::getCreated).reversed()).toList();
+        return paymentRepository.findPaymentsByCustomerId(userId);
     }
 
     @Override

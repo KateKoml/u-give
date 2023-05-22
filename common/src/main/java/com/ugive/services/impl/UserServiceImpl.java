@@ -3,11 +3,13 @@ package com.ugive.services.impl;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.UserMapper;
+import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.UserBalance;
 import com.ugive.models.enums.Gender;
+import com.ugive.repositories.FavouriteRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.RoleRepository;
 import com.ugive.repositories.UserBalanceRepository;
@@ -34,6 +36,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final FavouriteRepository favouriteRepository;
     private final PurchaseOfferRepository offerRepository;
     private final UserBalanceRepository userBalanceRepository;
     private final UserMapper userMapper;
@@ -74,8 +77,7 @@ public class UserServiceImpl implements UserService {
     @Cacheable("users")
     @Override
     public List<User> findAll() {
-        Sort sort = Sort.by("id").ascending();
-        return userRepository.findAll(sort);
+        return userRepository.findAllByDeletedFalseOrderById();
     }
 
     @Override
@@ -110,6 +112,13 @@ public class UserServiceImpl implements UserService {
         userBalance.setDeleted(true);
         userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
         userBalanceRepository.save(userBalance);
+
+        List<Favourite> favourites = favouriteRepository.findAllByUserId(id);
+        for (Favourite favourite : favourites) {
+            favourite.setDeleted(true);
+            favourite.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+            favouriteRepository.save(favourite);
+        }
 
         List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
         for (PurchaseOffer offer : offers) {

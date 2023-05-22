@@ -30,7 +30,6 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     private class AES {
-
         private SecretKeySpec secretKey;
         private byte[] key;
 

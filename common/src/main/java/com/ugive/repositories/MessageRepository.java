@@ -10,8 +10,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByChatIdAndTextContainingIgnoreCaseAndIsDeletedFalse(Long chatId, String textPart);
-
     @Query("SELECT m FROM Message m WHERE m.user.id = :userId AND m.isDeleted = false ORDER BY m.created DESC")
     List<Message> findAllForOneUser(@Param("userId") Long userId);
 
@@ -21,4 +19,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Modifying
     @Query("DELETE FROM Message m WHERE m.isDeleted = true AND m.changed < :expirationDate")
     void deleteExpiredMessage(@Param("expirationDate") Timestamp expirationDate);
+
+    List<Message> findAllByDeletedFalse();
 }

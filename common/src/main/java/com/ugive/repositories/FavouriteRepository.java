@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 public interface FavouriteRepository extends JpaRepository<Favourite, Long> {
     Page<Favourite> findAllByUserId(Long userId, Pageable pageable);
+    List<Favourite> findAllByUserId(Long userId);
 
     @Modifying
     @Query("DELETE FROM Favourite f WHERE f.isDeleted = true AND f.changed < :expirationDate")

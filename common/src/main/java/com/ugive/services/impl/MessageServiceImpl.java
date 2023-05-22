@@ -57,7 +57,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> findAll() {
-        List<Message> messages = messageRepository.findAll();
+        List<Message> messages = messageRepository.findAllByDeletedFalse();
         for (Message message : messages) {
             String decryptMessage = encryptionService.decrypt(message.getText());
             message.setText(decryptMessage);

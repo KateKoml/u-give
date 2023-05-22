@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    @Query("SELECT p FROM Payment p JOIN p.offer o WHERE o.customer.id = :userId")
-    public List<Payment> findByOfferCustomerId(@Param("userId") Long userId);
+    @Query("SELECT p FROM Payment p JOIN p.offer o WHERE o.customer.id = :userId AND p.isDeleted = false ORDER BY p.created DESC")
+    List<Payment> findPaymentsByCustomerId(@Param("userId") Long userId);
 }

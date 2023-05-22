@@ -15,6 +15,8 @@ public interface PurchaseOfferRepository extends JpaRepository<PurchaseOffer, Lo
 
     List<PurchaseOffer> findBySellerId(Long sellerId);
 
+    List<PurchaseOffer> findAllByDeletedFalseOrderByIdAsc();
+
     @Query("SELECT po FROM PurchaseOffer po WHERE po.isDeleted = true AND po.changed < :expirationDate")
     List<PurchaseOffer> findExpiredOffers(Timestamp expirationDate);
 

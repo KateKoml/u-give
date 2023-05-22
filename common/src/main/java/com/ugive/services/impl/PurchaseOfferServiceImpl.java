@@ -57,7 +57,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
 
     @Override
     public List<PurchaseOffer> findAll() {
-        return offerRepository.findAll();
+        return offerRepository.findAllByDeletedFalseOrderByIdAsc();
     }
 
     @Override
