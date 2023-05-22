@@ -4,6 +4,7 @@ import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;
 import com.ugive.requests.UserRequest;
+import com.ugive.services.EmailSenderService;
 import com.ugive.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,9 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -37,6 +40,8 @@ import java.util.Objects;
 @RequestMapping("rest/users")
 @RequiredArgsConstructor
 public class UserController {
+    private static final Logger logger = Logger.getLogger(UserController.class);
+    private final EmailSenderService emailSenderService;
     private final UserService userService;
 
     @Operation(
@@ -134,6 +139,15 @@ public class UserController {
         }
 
         User createdUser = userService.create(userRequest);
+
+        String emailMessage = "Hello " + createdUser.getUserName() + "!  \n We hope that our application will " +
+                "help you get rid of unnecessary things and buy new ones! \n\n\n With all wishes, U-Give ^_^";
+        try {
+            emailSenderService.sendEmail(createdUser.getAuthenticationInfo().getEmail(),
+                    "We glad to see You on our website! ", emailMessage);
+        } catch (MailException exception) {
+            logger.error("Error sending message");
+        }
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
