@@ -30,7 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @NonNull
     Page<User> findAll (Pageable pageable);
 
-    @Cacheable("users")
     @NonNull
     List<User> findAll(Sort sort);
 

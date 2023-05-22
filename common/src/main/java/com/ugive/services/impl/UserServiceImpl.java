@@ -15,6 +15,7 @@ import com.ugive.repositories.UserRepository;
 import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -70,6 +71,7 @@ public class UserServiceImpl implements UserService {
         return Optional.of(userRepository.save(user));
     }
 
+    @Cacheable("users")
     @Override
     public List<User> findAll() {
         Sort sort = Sort.by("id").ascending();
