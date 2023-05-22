@@ -4,6 +4,7 @@ import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.catalogs.ProductCategory;
+import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.ProductCategoryRepository;
 import com.ugive.requests.RoleRequest;
 import com.ugive.requests.catalogs.ProductCategoryRequest;
@@ -35,6 +36,7 @@ import java.util.Optional;
 public class AdminController {
     private final RoleService roleService;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductCategoryService categoryService;
@@ -49,6 +51,12 @@ public class AdminController {
     public ResponseEntity<Role> getRoleById(@PathVariable Integer id) {
         Role role = roleService.findOne(id);
         return new ResponseEntity<>(role, HttpStatus.OK);
+    }
+
+    @GetMapping("/roles/users/{userId}")
+    public ResponseEntity<List<Role>> getRoleById(@PathVariable Long userId) {
+        List<Role> roles = userRepository.findRolesByUserId(userId);
+        return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
     @PostMapping("/roles")

@@ -59,13 +59,13 @@ public class MessageController {
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<Message>> getAllUserMessages(@PathVariable Long userId) {
-        List<Message> messages = messageService.findAllForOneUser(userId);
+        List<Message> messages = messageService.findAllForOneUserSorted(userId);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
     @GetMapping("/chats/{chatId}")
     public ResponseEntity<List<Message>> getAllMessagesInChat(@PathVariable Long chatId) {
-        List<Message> messages = messageService.showAllMessagesInChat(chatId);
+        List<Message> messages = messageService.showAllMessagesInChatSorted(chatId);
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 
