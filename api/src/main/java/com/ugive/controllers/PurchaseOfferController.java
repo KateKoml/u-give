@@ -4,6 +4,7 @@ import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.requests.PurchaseOfferRequest;
+import com.ugive.services.EmailSenderService;
 import com.ugive.services.PurchaseOfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,9 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +39,9 @@ import java.util.Objects;
 @RequestMapping("/rest/offers")
 @RequiredArgsConstructor
 public class PurchaseOfferController {
+    private static final Logger logger = Logger.getLogger(PurchaseOfferController.class);
     private final PurchaseOfferRepository purchaseOfferRepository;
+    private final EmailSenderService emailSenderService;
     private final PurchaseOfferService purchaseOfferService;
 
     @Operation(
@@ -136,6 +141,16 @@ public class PurchaseOfferController {
         }
 
         PurchaseOffer purchaseOffer = purchaseOfferService.create(purchaseOfferRequest);
+
+        String emailMessage = "Your offer \"" + purchaseOffer.getProductName() + "\"  with price "
+                + purchaseOffer.getPrice() + " BYN was added on our website. \nWe hope You will find your customer! " +
+                "Good luck and have a nice day! \n\n\nWith all wishes, U-Give ^_^";
+        try {
+            emailSenderService.sendEmail(purchaseOffer.getSeller().getAuthenticationInfo().getEmail(),
+                    "We glad that You decided to use our application! ", emailMessage);
+        } catch (MailException exception) {
+            logger.error("Error sending message");
+        }
         return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
     }
 

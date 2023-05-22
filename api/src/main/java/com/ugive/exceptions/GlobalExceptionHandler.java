@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
 
         ErrorObject errorObject = new ErrorObject();
 
-        errorObject.setStatusCode(HttpStatus.FORBIDDEN.value());
+        errorObject.setStatusCode(HttpStatus.BAD_REQUEST.value());
         errorObject.setMessage(ex.getMessage());
         errorObject.setTimestamp(new Date());
 
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MoneyTransactionException.class)
-    public ResponseEntity<ErrorObject> handleUserValidationException(MoneyTransactionException ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleMoneyTransactionException(MoneyTransactionException ex, WebRequest request) {
 
         ErrorObject errorObject = new ErrorObject();
 
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ModifyingChatException.class)
-    public ResponseEntity<ErrorObject> handleUserValidationException(ModifyingChatException ex, WebRequest request) {
+    public ResponseEntity<ErrorObject> handleModifyingChatException(ModifyingChatException ex, WebRequest request) {
 
         ErrorObject errorObject = new ErrorObject();
 

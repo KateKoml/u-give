@@ -8,24 +8,27 @@ import com.ugive.models.Message;
 import com.ugive.repositories.ChatRepository;
 import com.ugive.repositories.MessageRepository;
 import com.ugive.requests.MessageRequest;
+import com.ugive.services.EncryptionService;
 import com.ugive.services.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class MessageServiceImpl implements MessageService {
+    private static final Logger logger = Logger.getLogger(MessageServiceImpl.class);
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
     private final MessageMapper messageMapper;
+    private final EncryptionService encryptionService;
 
     @Override
     @Transactional
@@ -33,10 +36,14 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageMapper.toEntity(messageDto);
         Chat chat = chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found."));
 
-        // Check if the sender is a member of the chat
+        //Check if the sender is a member of the chat
         if (!chat.getFirstUser().equals(message.getUser()) && !chat.getSecondUser().equals(message.getUser())) {
             throw new ForbiddenChangeException("This user is not a member of this chat");
         }
+
+        String encrypt = encryptionService.encrypt(message.getText());
+        message.setText(encrypt);
+
         return messageRepository.save(message);
     }
 
@@ -50,34 +57,46 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> findAll() {
-        return messageRepository.findAll();
+        List<Message> messages = messageRepository.findAll();
+        for (Message message : messages) {
+            String decryptMessage = encryptionService.decrypt(message.getText());
+            message.setText(decryptMessage);
+        }
+        return messages;
     }
 
     @Override
-    public List<Message> findAllForOneUser(Long userId) {
-        List<Message> messages = messageRepository.findAllByUserId(userId);
-        return messages.stream()
-                .filter(message -> !message.isDeleted())
-                .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .toList();
+    public List<Message> findAllForOneUserSorted(Long userId) {
+        List<Message> messages = messageRepository.findAllForOneUser(userId);
+        for (Message message : messages) {
+            String decryptMessage = encryptionService.decrypt(message.getText());
+            message.setText(decryptMessage);
+        }
+        return messages;
     }
 
     @Override
-    public List<Message> showAllMessagesInChat(Long chatId) {
-        List<Message> messages = messageRepository.findAllByChatId(chatId);
-        return messages.stream()
-                .filter(message -> !message.isDeleted())
-                .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .toList();
+    public List<Message> showAllMessagesInChatSorted(Long chatId) {
+        List<Message> messages = messageRepository.findAllMessagesInChatSorted(chatId);
+        for (Message message : messages) {
+            String decryptMessage = encryptionService.decrypt(message.getText());
+            message.setText(decryptMessage);
+        }
+        return messages;
     }
 
     @Override
     public List<Message> searchMessagesInChat(Long chatId, String textPart) {
-        List<Message> messages = messageRepository.findByChatIdAndTextContainingIgnoreCase(chatId, textPart);
-        return messages.stream()
-                .filter(message -> !message.isDeleted())
-                .sorted(Comparator.comparing(Message::getCreated).reversed())
-                .toList();
+        List<Message> messages = messageRepository.findAllMessagesInChatSorted(chatId);
+        List<Message> searchResult = new ArrayList<>();
+        for (Message message : messages) {
+            String decryptMessage = encryptionService.decrypt(message.getText());
+            message.setText(decryptMessage);
+            if (decryptMessage.contains(textPart)) {
+                searchResult.add(message);
+            }
+        }
+        return searchResult;
     }
 
     @Override
@@ -90,7 +109,10 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public Message findOne(Long id) {
-        return messageCheck(id);
+        Message message = messageCheck(id);
+        String decryptMessage = encryptionService.decrypt(message.getText());
+        message.setText(decryptMessage);
+        return message;
     }
 
     @Override

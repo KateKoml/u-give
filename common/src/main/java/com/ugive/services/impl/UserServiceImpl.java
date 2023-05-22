@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public User create(UserRequest userRequest) {
         User user = userMapper.toEntity(userRequest);
 
-        Role userRole = roleRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("This role doesn't exist"));
+        Role userRole = roleRepository.findByRoleName("USER").orElseThrow(() -> new EntityNotFoundException("This role doesn't exist"));
         user.getRoles().add(userRole);
         userRepository.save(user);
 

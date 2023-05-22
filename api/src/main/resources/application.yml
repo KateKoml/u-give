@@ -34,6 +34,17 @@ spring:
     clean-on-validation-error: false
     ignore-migration-patterns: '*:ignored'
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ugive.demo.project23@gmail.com
+    password: oqvpmtzwikzjyite
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls.enable: true
+
 application:
   security:
     jwt:

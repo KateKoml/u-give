@@ -1,5 +1,6 @@
 package com.ugive.repositories;
 
+import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;
 import lombok.NonNull;
@@ -19,8 +20,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @CacheEvict(value = "users", allEntries = true)
-    @NonNull
-    <S extends User> S save(S entity);
+    @NonNull <S extends User> S save(S entity);
 
     @Cacheable("users")
     @NonNull
@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Cacheable("users")
     @NonNull
-    Page<User> findAll (Pageable pageable);
+    Page<User> findAll(Pageable pageable);
 
     @NonNull
     List<User> findAll(Sort sort);
@@ -44,10 +44,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("gender") Gender gender,
             @Param("phone") String phone);
 
-    //сделать для админа
-//    @Cacheable("l_users_roles")
-//    @Query("SELECT r FROM Role r JOIN r.users u WHERE u.id = :userId")
-//    List<Role> findRolesByUserId(@Param("userId") Long userId);
+    @Cacheable("l_users_roles")
+    @Query("SELECT r FROM Role r JOIN r.users u WHERE u.id = :userId")
+    List<Role> findRolesByUserId(@Param("userId") Long userId);
 
     @Modifying
     @Query("DELETE FROM User u WHERE u.isDeleted = true AND u.changed < :expirationDate")

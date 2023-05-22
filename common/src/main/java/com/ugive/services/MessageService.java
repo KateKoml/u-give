@@ -13,9 +13,9 @@ public interface MessageService {
 
     List<Message> findAll();
 
-    List<Message> findAllForOneUser(Long userId);
+    List<Message> findAllForOneUserSorted(Long userId);
 
-    List<Message> showAllMessagesInChat(Long chatId);
+    List<Message> showAllMessagesInChatSorted(Long chatId);
 
     List<Message> searchMessagesInChat(Long chatId, String textPart);
 

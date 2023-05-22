@@ -10,11 +10,13 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByChatIdAndTextContainingIgnoreCase(Long chatId, String textPart);
+    List<Message> findByChatIdAndTextContainingIgnoreCaseAndIsDeletedFalse(Long chatId, String textPart);
 
-    List<Message> findAllByUserId(Long userId);
+    @Query("SELECT m FROM Message m WHERE m.user.id = :userId AND m.isDeleted = false ORDER BY m.created DESC")
+    List<Message> findAllForOneUser(@Param("userId") Long userId);
 
-    List<Message> findAllByChatId(Long chatId);
+    @Query("SELECT m FROM Message m WHERE m.chat.id = :chatId AND m.isDeleted = false ORDER BY m.created DESC")
+    List<Message> findAllMessagesInChatSorted(@Param("chatId") Long chatId);
 
     @Modifying
     @Query("DELETE FROM Message m WHERE m.isDeleted = true AND m.changed < :expirationDate")
