@@ -144,7 +144,7 @@ public class PurchaseOfferController {
 
         String emailMessage = "Your offer \"" + purchaseOffer.getProductName() + "\"  with price "
                 + purchaseOffer.getPrice() + " BYN was added on our website. \nWe hope You will find your customer! " +
-                "Good luck and have a nice day! \n\n\n With all wishes, U-Give ^_^";
+                "Good luck and have a nice day! \n\n\nWith all wishes, U-Give ^_^";
         try {
             emailSenderService.sendEmail(purchaseOffer.getSeller().getAuthenticationInfo().getEmail(),
                     "We glad that You decided to use our application! ", emailMessage);

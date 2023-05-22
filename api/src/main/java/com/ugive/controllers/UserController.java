@@ -140,8 +140,8 @@ public class UserController {
 
         User createdUser = userService.create(userRequest);
 
-        String emailMessage = "Hello " + createdUser.getUserName() + "!  \n We hope that our application will " +
-                "help you get rid of unnecessary things and buy new ones! \n\n\n With all wishes, U-Give ^_^";
+        String emailMessage = "Hello " + createdUser.getUserName() + "!  \nWe hope that our application will " +
+                "help you get rid of unnecessary things and buy new ones! \n\n\nWith all wishes, U-Give ^_^";
         try {
             emailSenderService.sendEmail(createdUser.getAuthenticationInfo().getEmail(),
                     "We glad to see You on our website! ", emailMessage);
