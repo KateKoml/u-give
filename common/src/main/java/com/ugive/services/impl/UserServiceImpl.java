@@ -18,7 +18,7 @@ import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
-import org.modelmapper.MappingException;
+import org.hibernate.Session;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +28,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.management.relation.RoleNotFoundException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

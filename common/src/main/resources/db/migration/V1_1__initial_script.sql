@@ -5,7 +5,7 @@ create table public.users
         unique,
     user_name     varchar(20)  not null,
     surname       varchar(30)  not null,
-    gender        varchar(20)   not null,
+    gender        varchar(20)  not null,
     e_mail        varchar(50)  not null,
     phone         varchar(12)  not null,
     user_login    varchar(30)  not null
@@ -30,7 +30,7 @@ CREATE SEQUENCE payment_type_id_seq;
 
 create table public.c_payment_type
 (
-    id         integer default nextval('payment_type_id_seq'::regclass)  not null
+    id         integer default nextval('payment_type_id_seq'::regclass) not null
         constraint payment_type_pkey
             primary key
         unique,
@@ -165,20 +165,20 @@ create index favourites_user_id_index
 
 create table public.chats
 (
-    id                  bigserial
+    id             bigserial
         primary key
         unique,
-    first_user_id  bigint                                          not null
+    first_user_id  bigint       not null
         constraint chat_users_id_fk_2
             references public.users
             on delete cascade,
-    second_user_id bigint                                          not null
+    second_user_id bigint       not null
         constraint chat_users_id_fk
             references public.users
             on delete cascade,
-    created        timestamp(6)                                    not null,
-    changed        timestamp(6)                                    not null,
-    is_deleted     boolean                                         not null
+    created        timestamp(6) not null,
+    changed        timestamp(6) not null,
+    is_deleted     boolean      not null
 );
 
 create index chat_first_user_id_index
