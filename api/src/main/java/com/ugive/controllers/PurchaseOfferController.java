@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -150,6 +151,7 @@ public class PurchaseOfferController {
                     "We glad that You decided to use our application! ", emailMessage);
         } catch (MailException exception) {
             logger.error("Error sending message");
+            throw new MailSendException(exception.getMessage());
         }
         return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
     }

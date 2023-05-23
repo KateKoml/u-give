@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
+import org.springframework.mail.MailSendException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -147,6 +148,7 @@ public class UserController {
                     "We glad to see You on our website! ", emailMessage);
         } catch (MailException exception) {
             logger.error("Error sending message");
+            throw new MailSendException(exception.getMessage());
         }
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }

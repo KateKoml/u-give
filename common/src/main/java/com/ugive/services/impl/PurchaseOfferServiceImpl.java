@@ -11,9 +11,11 @@ import com.ugive.repositories.catalogs.OfferStatusRepository;
 import com.ugive.requests.PurchaseOfferRequest;
 import com.ugive.services.PurchaseOfferService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.SchedulingException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class PurchaseOfferServiceImpl implements PurchaseOfferService {
+    private static final Logger logger = Logger.getLogger(PurchaseOfferServiceImpl.class);
     private final PurchaseOfferRepository offerRepository;
     private final UserRepository userRepository;
     private final OfferStatusRepository statusRepository;
@@ -34,7 +37,13 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     @Override
     @Transactional
     public PurchaseOffer create(PurchaseOfferRequest offerRequest) {
-        PurchaseOffer offer = purchaseOfferMapper.toEntity(offerRequest);
+        PurchaseOffer offer;
+        try {
+            offer = purchaseOfferMapper.toEntity(offerRequest);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Wrong mapping for entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return offerRepository.save(offer);
     }
 
@@ -42,7 +51,12 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     @Transactional
     public PurchaseOffer update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
+        try {
         purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Error updating purchase offer request to entity." + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return offerRepository.save(offer);
     }
 
@@ -104,6 +118,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
     @Transactional
     public void deleteExpiredOffer() {
+        try {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(5));
         List<PurchaseOffer> expiredOffers = offerRepository.findExpiredOffers(expirationDate);
         for (PurchaseOffer offer : expiredOffers) {
@@ -111,11 +126,15 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
             offerRepository.deleteConnectedPayment(offer);
             offerRepository.delete(offer);
         }
+        } catch (SchedulingException e) {
+            logger.error("Scheduling doesn't work correctly. " + e.getMessage());
+        }
     }
 
     private PurchaseOffer offerCheck(Long id) {
         PurchaseOffer offer = offerRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This offer doesn't exist or was deleted."));
         if (offer.isDeleted()) {
+            logger.error("Offer is deleted (isDeleted = true)");
             throw new ForbiddenChangeException("Offer is deleted");
         }
         return offer;

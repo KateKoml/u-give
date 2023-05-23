@@ -1,9 +1,9 @@
 package com.ugive.mappers;
 
-import com.ugive.requests.UserRequest;
 import com.ugive.models.AuthenticationInfo;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;
+import com.ugive.requests.UserRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

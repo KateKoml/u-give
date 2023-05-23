@@ -10,6 +10,8 @@ import com.ugive.models.User;
 import com.ugive.repositories.ChatRepository;
 import com.ugive.services.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
+import org.modelmapper.MappingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,14 +27,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class ChatServiceImpl implements ChatService {
+    private static final Logger logger = Logger.getLogger(ChatServiceImpl.class);
     private final ChatRepository chatRepository;
     private final ChatMapper chatMapper;
 
     @Override
     @Transactional
     public Chat create(ChatRequest chatRequest) {
-        Chat chat = chatMapper.toEntity(chatRequest);
+        Chat chat;
+        try {
+        chat = chatMapper.toEntity(chatRequest);
+        } catch (MappingException e) {
+            logger.error("Wrong mapping for entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
+            logger.error("This chat is already exists between these users.");
             throw new ModifyingChatException("This chat is already exists.");
         }
         return chatRepository.save(chat);
@@ -43,15 +53,20 @@ public class ChatServiceImpl implements ChatService {
     public Chat update(Long id, ChatRequest chatRequest) {
         Chat chat = chatCheck(id);
         if (isChatExistsBetweenUsers(chat.getSecondUser(), chat.getFirstUser())) {
+            logger.error("This chat is already exists between these users.");
             throw new ModifyingChatException("This chat is already exists.");
         }
+        try {
         chatMapper.updateEntityFromRequest(chatRequest, chat);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Error updating chat request to entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return chatRepository.save(chat);
     }
 
     @Override
     public List<Chat> findAll() {
-
         return chatRepository.findAllByDeletedFalseOrderByCreated();
     }
 
@@ -85,6 +100,7 @@ public class ChatServiceImpl implements ChatService {
     private Chat chatCheck(Long id) {
         Chat chat = chatRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This chat doesn't exist or was deleted."));
         if (chat.isDeleted()) {
+            logger.error("Chat is deleted (isDeleted = true.");
             throw new ForbiddenChangeException("Chat is deleted");
         }
         return chat;

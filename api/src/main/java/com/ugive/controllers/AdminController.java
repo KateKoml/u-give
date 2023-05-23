@@ -8,7 +8,9 @@ import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.ProductCategoryRepository;
 import com.ugive.requests.RoleRequest;
 import com.ugive.requests.catalogs.ProductCategoryRequest;
+import com.ugive.services.PaymentService;
 import com.ugive.services.RoleService;
+import com.ugive.services.UserBalanceService;
 import com.ugive.services.UserService;
 import com.ugive.services.catalogs.ProductCategoryService;
 import jakarta.validation.Valid;
@@ -37,7 +39,8 @@ public class AdminController {
     private final RoleService roleService;
     private final UserService userService;
     private final UserRepository userRepository;
-
+    private final PaymentService paymentService;
+    private final UserBalanceService balanceService;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductCategoryService categoryService;
 
@@ -100,7 +103,7 @@ public class AdminController {
 
     @PostMapping("/categories")
     public ResponseEntity<ProductCategory> createCategory(@Valid @RequestBody ProductCategoryRequest productCategoryRequest,
-                                                  BindingResult bindingResult) {
+                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
             throw new ValidationCheckException(errorMessage);
@@ -111,8 +114,8 @@ public class AdminController {
 
     @PutMapping("/categories/{id}")
     public ResponseEntity<ProductCategory> updateCategory(@PathVariable Integer id,
-                                                  @Valid @RequestBody ProductCategoryRequest productCategoryRequest,
-                                                  BindingResult bindingResult) {
+                                                          @Valid @RequestBody ProductCategoryRequest productCategoryRequest,
+                                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorMessage = Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage();
             throw new ValidationCheckException(errorMessage);
@@ -125,5 +128,17 @@ public class AdminController {
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         productCategoryRepository.deleteById(id);
         return new ResponseEntity<>("Category was deleted.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/payments/{id}")
+    public ResponseEntity<String> deletePayment(@PathVariable("id") Long id) {
+        paymentService.deleted(id);
+        return new ResponseEntity<>("Payment is deleted.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/balances/{id}")
+    public ResponseEntity<String> deleteBalance(@PathVariable("id") Long id) {
+        balanceService.delete(id);
+        return new ResponseEntity<>("This balance is deleted.", HttpStatus.OK);
     }
 }

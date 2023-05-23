@@ -12,6 +12,8 @@ import com.ugive.services.EncryptionService;
 import com.ugive.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
+import org.modelmapper.MappingException;
+import org.springframework.scheduling.SchedulingException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +35,13 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public Message create(MessageRequest messageDto) {
-        Message message = messageMapper.toEntity(messageDto);
+        Message message;
+        try {
+        message = messageMapper.toEntity(messageDto);
+        } catch (MappingException e) {
+            logger.error("Wrong mapping for entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         Chat chat = chatRepository.findById(messageDto.getPrivateChat()).orElseThrow(() -> new EntityNotFoundException("Chat not found."));
 
         //Check if the sender is a member of the chat
@@ -51,7 +59,12 @@ public class MessageServiceImpl implements MessageService {
     @Transactional
     public Message update(Long id, MessageRequest messageDto) {
         Message message = messageCheck(id);
+        try {
         messageMapper.updateEntityFromRequest(messageDto, message);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Error updating message request to entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return messageRepository.save(message);
     }
 
@@ -127,13 +140,18 @@ public class MessageServiceImpl implements MessageService {
     @Scheduled(cron = "0 0 0 * * *") // Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
     @Transactional
     public void deleteExpiredMessage() {
+        try {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(10));
         messageRepository.deleteExpiredMessage(expirationDate);
+        } catch (SchedulingException e) {
+            logger.error("Scheduling doesn't work correctly. " + e.getMessage());
+        }
     }
 
     private Message messageCheck(Long id) {
         Message message = messageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This message doesn't exist or was deleted."));
         if (message.isDeleted()) {
+            logger.error("Message is deleted (isDeleted = true)");
             throw new EntityNotFoundException("This message was deleted.");
         }
         return message;

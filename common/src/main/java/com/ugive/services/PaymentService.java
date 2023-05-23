@@ -19,5 +19,5 @@ public interface PaymentService {
 
     Payment findOne(Long id);
 
-    void markAsDeleted(Long id);
+    void deleted(Long id);
 }

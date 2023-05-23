@@ -71,10 +71,4 @@ public class UserBalanceController {
         UserBalance userBalance = userBalanceService.sendMoney(idFirstUser, idSecondUser, newMoney);
         return new ResponseEntity<>(userBalance, HttpStatus.OK);
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteBalance(@PathVariable("id") Long id) {
-        userBalanceService.softDelete(id);
-        return new ResponseEntity<>("This balance is deleted.", HttpStatus.OK);
-    }
 }

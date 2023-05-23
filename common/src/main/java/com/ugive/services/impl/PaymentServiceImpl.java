@@ -1,5 +1,7 @@
 package com.ugive.services.impl;
 
+import com.ugive.exceptions.ForbiddenChangeException;
+import com.ugive.exceptions.MoneyTransactionException;
 import com.ugive.requests.PaymentRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.mappers.PaymentMapper;
@@ -13,6 +15,7 @@ import com.ugive.services.PaymentService;
 import com.ugive.services.PurchaseOfferService;
 import com.ugive.services.UserBalanceService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,6 +31,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class PaymentServiceImpl implements PaymentService {
+    private static final Logger logger = Logger.getLogger(PaymentServiceImpl.class);
     private final PaymentRepository paymentRepository;
     private final PurchaseOfferRepository offerRepository;
     private final PurchaseOfferService offerService;
@@ -38,7 +42,13 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public Payment create(PaymentRequest paymentRequest) {
-        Payment payment = paymentMapper.toEntity(paymentRequest);
+        Payment payment;
+        try {
+        payment = paymentMapper.toEntity(paymentRequest);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Wrong mapping for entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return paymentRepository.save(payment);
     }
 
@@ -46,7 +56,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public Payment update(Long id, PaymentRequest paymentRequest) {
         Payment payment = paymentCheck(id);
+        try {
         paymentMapper.updateEntityFromRequest(paymentRequest, payment);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Error updating payment request to entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return paymentRepository.save(payment);
     }
 
@@ -75,10 +90,15 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentType paymentType = typeRepository.findByType(type).orElseThrow(() -> new EntityNotFoundException("This type not available"));
         PaymentRequest paymentRequest = new PaymentRequest(purchaseOfferId, paymentType.getId());
 
-        // 3 = digital wallet
-        if (paymentType.getId() == 3) {
-            userBalanceService.sendMoney(customerId, offer.getSeller().getId(), offer.getPrice());
-            offerService.markAsSoldOffers(purchaseOfferId, customerId);
+        try {
+            // 3 = digital wallet
+            if (paymentType.getId() == 3) {
+                userBalanceService.sendMoney(customerId, offer.getSeller().getId(), offer.getPrice());
+                offerService.markAsSoldOffers(purchaseOfferId, customerId);
+            }
+        }catch (MoneyTransactionException e) {
+            logger.error("Money  transaction was not successful");
+            throw new MoneyTransactionException(e.getMessage());
         }
 
         return create(paymentRequest);
@@ -86,16 +106,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void markAsDeleted(Long id) {
+    public void deleted(Long id) {
         Payment payment = paymentCheck(id);
-        payment.setDeleted(true);
-        payment.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        paymentRepository.save(payment);
+        paymentRepository.delete(payment);
     }
 
     private Payment paymentCheck(Long id) {
         Payment payment = paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This payment doesn't exist or was deleted."));
         if (payment.isDeleted()) {
+            logger.error("Payment is deleted (isDeleted = true)");
             throw new EntityNotFoundException("This message was deleted.");
         }
         return payment;

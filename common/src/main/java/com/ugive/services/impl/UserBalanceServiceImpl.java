@@ -1,15 +1,15 @@
 package com.ugive.services.impl;
 
-import com.ugive.models.User;
-import com.ugive.requests.UserBalanceRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.MoneyTransactionException;
 import com.ugive.mappers.UserBalanceMapper;
 import com.ugive.models.UserBalance;
 import com.ugive.repositories.UserBalanceRepository;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.services.UserBalanceService;
 import lombok.RequiredArgsConstructor;
+import org.apache.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,18 +21,24 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class UserBalanceServiceImpl implements UserBalanceService {
+    private static final Logger logger = Logger.getLogger(UserBalanceServiceImpl.class);
     private final UserBalanceMapper userBalanceMapper;
     private final UserBalanceRepository userBalanceRepository;
 
     @Override
     @Transactional
     public UserBalance create(UserBalanceRequest userBalanceRequest) {
-        UserBalance userBalance = userBalanceMapper.toEntity(userBalanceRequest);
+        UserBalance userBalance;
+        try {
+        userBalance = userBalanceMapper.toEntity(userBalanceRequest);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Wrong mapping for entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return userBalanceRepository.save(userBalance);
     }
 
@@ -40,7 +46,12 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Transactional
     public UserBalance update(Long id, UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = findOne(id);
+        try {
         userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
+        } catch (ForbiddenChangeException e) {
+            logger.error("Error updating user balance request to entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return userBalanceRepository.save(userBalance);
     }
 
@@ -58,6 +69,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     public UserBalance findOne(Long id) {
         UserBalance userBalance = userBalanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("This balance is not available."));
         if (userBalance.isDeleted()) {
+            logger.error("User balance is deleted (isDeleted = true)");
             throw new ForbiddenChangeException("User balance is not available, user was deleted.");
         }
         return userBalance;
@@ -65,11 +77,9 @@ public class UserBalanceServiceImpl implements UserBalanceService {
 
     @Override
     @Transactional
-    public void softDelete(Long id) {
+    public void delete(Long id) {
         UserBalance userBalance = findOne(id);
-        userBalance.setDeleted(true);
-        userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
-        userBalanceRepository.save(userBalance);
+        userBalanceRepository.delete(userBalance);
     }
 
     @Override
@@ -124,6 +134,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
         try {
             userBalance = userBalanceRepository.findByUserId(userId);
         } catch (EntityNotFoundException ex) {
+            logger.error(ex.getMessage());
             throw new EntityNotFoundException("User not found.");
         }
         return userBalance;

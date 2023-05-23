@@ -37,7 +37,6 @@ public class UserRequest {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "FEMALE",
             type = "Gender", description = "User gender")
-    @NotNull
     private Gender gender;
 
     @Size(max = 12)

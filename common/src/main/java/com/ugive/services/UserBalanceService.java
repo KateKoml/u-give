@@ -16,7 +16,7 @@ public interface UserBalanceService {
 
     UserBalance findOne(Long id);
 
-    void softDelete(Long id);
+    void delete(Long id);
 
     UserBalance topUpBalance(Long id, BigDecimal money);
 

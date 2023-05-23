@@ -1,5 +1,6 @@
 package com.ugive.services.impl;
 
+import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.services.EncryptionService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class EncryptionServiceImpl implements EncryptionService {
                 key = Arrays.copyOf(key, 16);
                 secretKey = new SecretKeySpec(key, "AES");
             } catch (NoSuchAlgorithmException e) {
-                logger.error("Encrypting failed." + e.getMessage());
+                logger.error("Creating secretKey failed." + e.getMessage());
             }
         }
 
@@ -54,9 +55,9 @@ public class EncryptionServiceImpl implements EncryptionService {
                         .encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.ISO_8859_1)));
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Encrypting failed." + e.getMessage());
             }
-            return null;
+            return strToEncrypt;
 
         }
 
@@ -67,9 +68,9 @@ public class EncryptionServiceImpl implements EncryptionService {
                 return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
 
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Encrypting failed." + e.getMessage());
             }
-            return null;
+            return strToDecrypt;
         }
     }
 

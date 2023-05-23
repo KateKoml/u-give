@@ -1,7 +1,7 @@
 package com.ugive.mappers;
 
-import com.ugive.requests.UserBalanceRequest;
 import com.ugive.models.UserBalance;
+import com.ugive.requests.UserBalanceRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
