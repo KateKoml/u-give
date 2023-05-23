@@ -67,7 +67,7 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<Chat> findAll() {
-        return chatRepository.findAllByDeletedFalseOrderByCreated();
+        return chatRepository.findAllByIsDeletedFalseOrderByCreated();
     }
 
     @Override

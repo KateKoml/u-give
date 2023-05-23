@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Cacheable("roles")
 public interface RoleRepository extends JpaRepository<Role, Integer> {
-    List<Role> findAllByDeletedFalse();
+    List<Role> findAllByIsDeletedFalse();
     Optional<Role> findByRoleName(String roleName);
 }

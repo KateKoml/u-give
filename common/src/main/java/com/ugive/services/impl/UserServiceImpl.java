@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
     @Cacheable("users")
     @Override
     public List<User> findAll() {
-        return userRepository.findAllByDeletedFalseOrderById();
+        return userRepository.findAllByIsDeletedFalseOrderById();
     }
 
     @Override

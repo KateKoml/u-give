@@ -49,7 +49,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<Role> findAll() {
-        return roleRepository.findAllByDeletedFalse();
+        return roleRepository.findAllByIsDeletedFalse();
     }
 
     @Override

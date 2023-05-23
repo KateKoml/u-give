@@ -148,7 +148,6 @@ public class UserController {
                     "We glad to see You on our website! ", emailMessage);
         } catch (MailException exception) {
             logger.error("Error sending message");
-            throw new MailSendException(exception.getMessage());
         }
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }

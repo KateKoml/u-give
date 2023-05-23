@@ -151,7 +151,6 @@ public class PurchaseOfferController {
                     "We glad that You decided to use our application! ", emailMessage);
         } catch (MailException exception) {
             logger.error("Error sending message");
-            throw new MailSendException(exception.getMessage());
         }
         return new ResponseEntity<>(purchaseOffer, HttpStatus.CREATED);
     }
