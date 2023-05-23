@@ -1,4 +1,4 @@
-create table public.users
+create table if not exists public.users
 (
     id            bigserial
         primary key
@@ -28,7 +28,7 @@ create index users_surname_gender_index
 
 CREATE SEQUENCE payment_type_id_seq;
 
-create table public.c_payment_type
+create table if not exists public.c_payment_type
 (
     id         integer default nextval('payment_type_id_seq'::regclass) not null
         constraint payment_type_pkey
@@ -45,7 +45,7 @@ create index c_payment_type_type_index
 
 CREATE SEQUENCE categories_id_seq;
 
-create table public.c_product_categories
+create table if not exists public.c_product_categories
 (
     id            integer default nextval('categories_id_seq'::regclass) not null
         constraint categories_pkey
@@ -62,7 +62,7 @@ create table public.c_product_categories
 
 CREATE SEQUENCE conditions_id_seq;
 
-create table public.c_product_conditions
+create table if not exists public.c_product_conditions
 (
     id             integer default nextval('conditions_id_seq'::regclass) not null
         constraint conditions_pkey
@@ -79,7 +79,7 @@ create table public.c_product_conditions
 
 CREATE SEQUENCE status_id_seq;
 
-create table public.c_offer_status
+create table if not exists public.c_offer_status
 (
     id          integer default nextval('status_id_seq'::regclass) not null
         constraint status_pkey
@@ -93,7 +93,7 @@ create table public.c_offer_status
     is_deleted  boolean                                            not null
 );
 
-create table public.purchase_offers
+create table if not exists public.purchase_offers
 (
     id                   bigserial
         primary key
@@ -108,7 +108,7 @@ create table public.purchase_offers
     status_id            integer      not null
         constraint purchase_offers_status_id_fk
             references public.c_offer_status,
-    product_name         varchar(50)  not null,
+    product_name         varchar(200)  not null,
     product_category_id  integer      not null
         constraint purchase_offers_categories_id_fk
             references public.c_product_categories,
@@ -136,7 +136,7 @@ create index purchase_offers_product_category_id_index
 create index purchase_offers_price_index
     on public.purchase_offers (price);
 
-create table public.favourites
+create table if not exists public.favourites
 (
     id                bigserial
         primary key
@@ -163,7 +163,7 @@ create index favourites_user_id_index
 
 
 
-create table public.chats
+create table if not exists public.chats
 (
     id             bigserial
         primary key
@@ -190,7 +190,7 @@ create index chat_second_user_id_index
 create index chats_created_index
     on public.chats (created desc);
 
-create table public.messages
+create table if not exists public.messages
 (
     id         bigserial
         primary key
@@ -220,7 +220,7 @@ create index messages_text_index
 create index messages_created_index
     on public.messages (created desc);
 
-create table public.user_balance
+create table if not exists public.user_balance
 (
     id         bigserial
         primary key
@@ -236,7 +236,7 @@ create table public.user_balance
 create index user_balance_balance_index
     on public.user_balance (balance desc);
 
-create table public.payments
+create table if not exists public.payments
 (
     id              bigserial
         primary key
@@ -247,8 +247,8 @@ create table public.payments
     payment_type_id integer   not null
         constraint payments_c_payment_type_id_fk
             references public.c_payment_type,
-    created         timestamp not null,
-    changed         timestamp not null,
+    created         timestamp(6) not null,
+    changed         timestamp(6) not null,
     is_deleted      boolean   not null
 );
 
@@ -258,7 +258,7 @@ create index payments_created_index
 create index payments_offer_id_index
     on public.payments (offer_id);
 
-create table public.roles
+create table if not exists public.roles
 (
     id         serial
         primary key
@@ -272,7 +272,7 @@ create table public.roles
 create index roles_role_name_index
     on public.roles (role_name);
 
-create table public.l_users_roles
+create table if not exists public.l_users_roles
 (
     id         bigserial
         primary key
@@ -297,40 +297,40 @@ create index l_users_roles_user_id_role_id_index
     on public.l_users_roles (user_id, role_id);
 
 alter table public.users
-    owner to postgres;
+    owner to kate;
 
 alter table public.c_payment_type
-    owner to postgres;
+    owner to kate;
 
 alter table public.c_product_categories
-    owner to postgres;
+    owner to kate;
 
 alter table public.c_product_conditions
-    owner to postgres;
+    owner to kate;
 
 alter table public.c_offer_status
-    owner to postgres;
+    owner to kate;
 
 alter table public.purchase_offers
-    owner to postgres;
+    owner to kate;
 
 alter table public.favourites
-    owner to postgres;
+    owner to kate;
 
 alter table public.chats
-    owner to postgres;
+    owner to kate;
 
 alter table public.messages
-    owner to postgres;
+    owner to kate;
 
 alter table public.user_balance
-    owner to postgres;
+    owner to kate;
 
 alter table public.payments
-    owner to postgres;
+    owner to kate;
 
 alter table public.roles
-    owner to postgres;
+    owner to kate;
 
 alter table public.l_users_roles
-    owner to postgres;
+    owner to kate;

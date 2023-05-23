@@ -6,3 +6,5 @@ drop function if exists insert_user_balance() cascade;
 
 drop function if exists insert_payments() cascade;
 
+
+
