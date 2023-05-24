@@ -4,7 +4,7 @@ import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.requests.PurchaseOfferRequest;
-import com.ugive.services.EmailSenderService;
+import com.ugive.services.email.EmailSenderService;
 import com.ugive.services.PurchaseOfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

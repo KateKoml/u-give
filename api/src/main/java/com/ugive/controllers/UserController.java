@@ -4,7 +4,7 @@ import com.ugive.exceptions.ValidationCheckException;
 import com.ugive.models.User;
 import com.ugive.models.enums.Gender;
 import com.ugive.requests.UserRequest;
-import com.ugive.services.EmailSenderService;
+import com.ugive.services.email.EmailSenderService;
 import com.ugive.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,7 +56,7 @@ public class UserController {
                                     array = @ArraySchema(schema = @Schema(implementation = User.class)))
 
                     ),
-                    @ApiResponse(responseCode = "INTERVAL_SERVER_ERROR", description = "Internal Server Error")
+                    @ApiResponse(responseCode = "INTERNAL_SERVER_ERROR", description = "Internal Server Error")
             }
     )
     @GetMapping

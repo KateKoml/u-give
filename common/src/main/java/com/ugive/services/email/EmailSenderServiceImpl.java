@@ -1,6 +1,6 @@
-package com.ugive.services.impl;
+package com.ugive.services.email;
 
-import com.ugive.services.EmailSenderService;
+import com.ugive.services.email.EmailSenderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
