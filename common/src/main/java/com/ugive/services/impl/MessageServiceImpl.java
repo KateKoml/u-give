@@ -37,7 +37,7 @@ public class MessageServiceImpl implements MessageService {
     public Message create(MessageRequest messageDto) {
         Message message;
         try {
-        message = messageMapper.toEntity(messageDto);
+            message = messageMapper.toEntity(messageDto);
         } catch (MappingException e) {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -60,7 +60,7 @@ public class MessageServiceImpl implements MessageService {
     public Message update(Long id, MessageRequest messageDto) {
         Message message = messageCheck(id);
         try {
-        messageMapper.updateEntityFromRequest(messageDto, message);
+            messageMapper.updateEntityFromRequest(messageDto, message);
         } catch (ForbiddenChangeException e) {
             logger.error("Error updating message request to entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -137,12 +137,12 @@ public class MessageServiceImpl implements MessageService {
         messageRepository.save(message);
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteExpiredMessage() {
         try {
-        Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(10));
-        messageRepository.deleteExpiredMessage(expirationDate);
+            Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(10));
+            messageRepository.deleteExpiredMessage(expirationDate);
         } catch (SchedulingException e) {
             logger.error("Scheduling doesn't work correctly. " + e.getMessage());
         }

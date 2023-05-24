@@ -1,6 +1,5 @@
 package com.ugive.services.impl;
 
-import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.services.EncryptionService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;

@@ -34,7 +34,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     public UserBalance create(UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance;
         try {
-        userBalance = userBalanceMapper.toEntity(userBalanceRequest);
+            userBalance = userBalanceMapper.toEntity(userBalanceRequest);
         } catch (ForbiddenChangeException e) {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -47,7 +47,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     public UserBalance update(Long id, UserBalanceRequest userBalanceRequest) {
         UserBalance userBalance = findOne(id);
         try {
-        userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
+            userBalanceMapper.updateEntityFromRequest(userBalanceRequest, userBalance);
         } catch (ForbiddenChangeException e) {
             logger.error("Error updating user balance request to entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -78,8 +78,7 @@ public class UserBalanceServiceImpl implements UserBalanceService {
     @Override
     @Transactional
     public void delete(Long id) {
-        UserBalance userBalance = findOne(id);
-        userBalanceRepository.delete(userBalance);
+        userBalanceRepository.deleteById(id);
     }
 
     @Override

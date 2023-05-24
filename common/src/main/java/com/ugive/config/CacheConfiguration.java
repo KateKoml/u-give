@@ -21,6 +21,7 @@ public class CacheConfiguration {
     private Integer initialCapacity;
     private Integer maximumSize;
     private Integer expireAfterAccessHours;
+
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("c_offer_status", "c_payment_type",

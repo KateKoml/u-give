@@ -28,6 +28,7 @@ public class SwaggerConfig {
                 .name("MIT Licence")
                 .url("https://opensource.org/licenses/mit-licenses.php");
     }
+
     private Contact contact() {
         return new Contact()
                 .email("komlevakate99@gmail.com")

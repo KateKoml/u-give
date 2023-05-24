@@ -1,6 +1,5 @@
 package com.ugive.services.impl;
 
-import com.ugive.requests.FavouriteRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.FavouriteMapper;
@@ -8,6 +7,7 @@ import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.FavouriteRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
+import com.ugive.requests.FavouriteRequest;
 import com.ugive.services.FavouriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -68,7 +67,7 @@ public class FavouriteServiceImpl implements FavouriteService {
         favouriteRepository.delete(favourite);
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteFromFavourite() {
         Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(1));

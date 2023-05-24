@@ -1,10 +1,9 @@
 package com.ugive.services;
 
-import com.ugive.requests.ChatRequest;
 import com.ugive.models.Chat;
+import com.ugive.requests.ChatRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ChatService {
     Chat create(ChatRequest chatRequest);

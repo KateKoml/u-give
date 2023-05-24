@@ -1,11 +1,10 @@
 package com.ugive.services;
 
-import com.ugive.requests.FavouriteRequest;
 import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
+import com.ugive.requests.FavouriteRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FavouriteService {
     Favourite create(FavouriteRequest favouriteRequest);

@@ -1,11 +1,10 @@
 package com.ugive.services;
 
-import com.ugive.requests.UserBalanceRequest;
 import com.ugive.models.UserBalance;
+import com.ugive.requests.UserBalanceRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 public interface UserBalanceService {
     UserBalance create(UserBalanceRequest userBalanceRequest);

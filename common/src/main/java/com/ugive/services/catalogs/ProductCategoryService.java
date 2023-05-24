@@ -5,5 +5,6 @@ import com.ugive.requests.catalogs.ProductCategoryRequest;
 
 public interface ProductCategoryService {
     ProductCategory create(ProductCategoryRequest categoryRequest);
+
     ProductCategory update(Integer id, ProductCategoryRequest categoryRequest);
 }

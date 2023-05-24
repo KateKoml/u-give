@@ -26,7 +26,7 @@ public class RoleServiceImpl implements RoleService {
     public Role create(RoleRequest roleRequest) {
         Role role;
         try {
-        role = roleMapper.toEntity(roleRequest);
+            role = roleMapper.toEntity(roleRequest);
         } catch (ForbiddenChangeException e) {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());

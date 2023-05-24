@@ -1,10 +1,9 @@
 package com.ugive.services;
 
-import com.ugive.requests.MessageRequest;
 import com.ugive.models.Message;
+import com.ugive.requests.MessageRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface MessageService {
     Message create(MessageRequest messageRequest);

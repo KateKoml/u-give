@@ -1,6 +1,5 @@
 package com.ugive.services.impl;
 
-import com.ugive.requests.ChatRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.ModifyingChatException;
@@ -8,12 +7,11 @@ import com.ugive.mappers.ChatMapper;
 import com.ugive.models.Chat;
 import com.ugive.models.User;
 import com.ugive.repositories.ChatRepository;
+import com.ugive.requests.ChatRequest;
 import com.ugive.services.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.modelmapper.MappingException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,7 +33,7 @@ public class ChatServiceImpl implements ChatService {
     public Chat create(ChatRequest chatRequest) {
         Chat chat;
         try {
-        chat = chatMapper.toEntity(chatRequest);
+            chat = chatMapper.toEntity(chatRequest);
         } catch (MappingException e) {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -57,7 +54,7 @@ public class ChatServiceImpl implements ChatService {
             throw new ModifyingChatException("This chat is already exists.");
         }
         try {
-        chatMapper.updateEntityFromRequest(chatRequest, chat);
+            chatMapper.updateEntityFromRequest(chatRequest, chat);
         } catch (ForbiddenChangeException e) {
             logger.error("Error updating chat request to entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());

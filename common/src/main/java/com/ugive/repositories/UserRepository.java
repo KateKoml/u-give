@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -50,4 +49,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("DELETE FROM User u WHERE u.isDeleted = true AND u.changed < :expirationDate")
     void deleteExpiredUsers(@Param("expirationDate") Timestamp expirationDate);
+
+    @Modifying
+    @Query("DELETE FROM UserBalance ub WHERE ub.user.id IN (SELECT u.id FROM User u WHERE u.isDeleted = true AND u.changed < :expirationDate)")
+    void deleteExpiredUserBalances(@Param("expirationDate") Timestamp expirationDate);
 }

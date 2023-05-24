@@ -18,7 +18,6 @@ import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
         } catch (EntityNotFoundException e) {
             logger.error("This role doesn't exist. " + e.getMessage());
         }
-        if(userRole != null) {
+        if (userRole != null) {
             user.getRoles().add(userRole);
         }
         userRepository.save(user);
@@ -86,9 +85,9 @@ public class UserServiceImpl implements UserService {
         try {
             userMapper.updateEntityFromRequest(userRequest, user);
         } catch (ForbiddenChangeException e) {
-        logger.error("Error updating user request to entity. " + e.getMessage());
-        throw new ForbiddenChangeException(e.getMessage());
-    }
+            logger.error("Error updating user request to entity. " + e.getMessage());
+            throw new ForbiddenChangeException(e.getMessage());
+        }
         return userRepository.save(user);
     }
 
@@ -158,12 +157,18 @@ public class UserServiceImpl implements UserService {
             offer.setChanged(Timestamp.valueOf(LocalDateTime.now()));
             offerRepository.save(offer);
         }
+
+        for (Role role : user.getRoles()) {
+            role.setDeleted(true);
+            role.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+            roleRepository.save(role);
+        }
     }
 
     @Override
     @Transactional
     public User resetAccount(Long id) {
-        User user = userCheck(id);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User could not be found"));
         UserBalance userBalance = userBalanceRepository.findByUserId(id);
 
         if (user.isDeleted()) {
@@ -173,6 +178,13 @@ public class UserServiceImpl implements UserService {
             userBalance.setDeleted(false);
             userBalance.setChanged(Timestamp.valueOf(LocalDateTime.now()));
             userBalanceRepository.save(userBalance);
+
+            List<Favourite> favourites = favouriteRepository.findAllByUserId(id);
+            for (Favourite favourite : favourites) {
+                favourite.setDeleted(false);
+                favourite.setChanged(Timestamp.valueOf(LocalDateTime.now()));
+                favouriteRepository.save(favourite);
+            }
 
             List<PurchaseOffer> offers = offerRepository.findBySellerId(id);
             for (PurchaseOffer offer : offers) {
@@ -184,12 +196,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteExpiredUsers() {
         try {
             Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(30));
+            userRepository.deleteExpiredUserBalances(expirationDate);
             userRepository.deleteExpiredUsers(expirationDate);
+
         } catch (SchedulingException e) {
             logger.error("Scheduling doesn't work correctly. " + e.getMessage());
         }

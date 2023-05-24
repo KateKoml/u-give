@@ -17,17 +17,18 @@ import java.util.Map;
 @Controller
 public class MainController {
     private final PurchaseOfferRepository purchaseOfferRepository;
+
     @GetMapping("/")
     public String startPage(Map<String, Object> model) {
         return "start_page";
     }
 
     @GetMapping("/search")
-    public String search(@RequestParam(name="categoryName") String categoryName,
-                                      @RequestParam(name="conditionName") String conditionName,
-                                      @RequestParam(name="minPrice") BigDecimal minPrice,
-                                      @RequestParam(name="maxPrice") BigDecimal maxPrice,
-                                      Model model) {
+    public String search(@RequestParam(name = "categoryName") String categoryName,
+                         @RequestParam(name = "conditionName") String conditionName,
+                         @RequestParam(name = "minPrice") BigDecimal minPrice,
+                         @RequestParam(name = "maxPrice") BigDecimal maxPrice,
+                         Model model) {
         if (conditionName.equals("any")) {
             conditionName = "%";
         }

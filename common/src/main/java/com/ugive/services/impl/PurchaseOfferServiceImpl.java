@@ -4,7 +4,6 @@ import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.mappers.PurchaseOfferMapper;
 import com.ugive.models.PurchaseOffer;
-import com.ugive.repositories.FavouriteRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.OfferStatusRepository;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -44,6 +42,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
         }
+        checkIdsNotEqual(offerRequest.getSeller(), offerRequest.getCustomer());
         return offerRepository.save(offer);
     }
 
@@ -52,11 +51,12 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     public PurchaseOffer update(Long id, PurchaseOfferRequest offerRequest) {
         PurchaseOffer offer = offerCheck(id);
         try {
-        purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
+            purchaseOfferMapper.updateEntityFromRequest(offerRequest, offer);
         } catch (ForbiddenChangeException e) {
             logger.error("Error updating purchase offer request to entity." + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
         }
+        checkIdsNotEqual(offer.getSeller().getId(), offer.getCustomer().getId());
         return offerRepository.save(offer);
     }
 
@@ -89,6 +89,7 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
     public void markAsSoldOffers(Long id, Long customerId) {
         PurchaseOffer offer = offerCheck(id);
         offer.setOfferStatus(statusRepository.findById(2).orElseThrow(() -> new EntityNotFoundException("Wrong status")));
+        checkIdsNotEqual(offer.getSeller().getId(), customerId);
         offer.setCustomer(userRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException("User not found")));
         offer.setDeleted(true);
         offerRepository.save(offer);
@@ -115,17 +116,17 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
         return offerRepository.save(offer);
     }
 
-    @Scheduled(cron = "0 0 0 * * *") // "0 0 0 * * *" Запускать каждый день в полночь,  "0 */1 * * * *" каждая минута
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteExpiredOffer() {
         try {
-        Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(5));
-        List<PurchaseOffer> expiredOffers = offerRepository.findExpiredOffers(expirationDate);
-        for (PurchaseOffer offer : expiredOffers) {
-            offerRepository.deleteConnectedFavourite(offer);
-            offerRepository.deleteConnectedPayment(offer);
-            offerRepository.delete(offer);
-        }
+            Timestamp expirationDate = Timestamp.valueOf(LocalDateTime.now().minusDays(5));
+            List<PurchaseOffer> expiredOffers = offerRepository.findExpiredOffers(expirationDate);
+            for (PurchaseOffer offer : expiredOffers) {
+                offerRepository.deleteConnectedFavourite(offer);
+                offerRepository.deleteConnectedPayment(offer);
+                offerRepository.delete(offer);
+            }
         } catch (SchedulingException e) {
             logger.error("Scheduling doesn't work correctly. " + e.getMessage());
         }
@@ -138,5 +139,11 @@ public class PurchaseOfferServiceImpl implements PurchaseOfferService {
             throw new ForbiddenChangeException("Offer is deleted");
         }
         return offer;
+    }
+
+    private void checkIdsNotEqual(Long sellerId, Long customerId) {
+        if (sellerId.equals(customerId)) {
+            throw new ForbiddenChangeException("Seller and customer IDs cannot be the same.");
+        }
     }
 }

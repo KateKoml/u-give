@@ -1,10 +1,10 @@
 package com.ugive.mappers;
 
-import com.ugive.requests.FavouriteRequest;
 import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.models.Favourite;
 import com.ugive.models.PurchaseOffer;
 import com.ugive.repositories.PurchaseOfferRepository;
+import com.ugive.requests.FavouriteRequest;
 import com.ugive.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

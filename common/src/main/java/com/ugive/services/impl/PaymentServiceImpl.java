@@ -1,9 +1,8 @@
 package com.ugive.services.impl;
 
+import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.exceptions.ForbiddenChangeException;
 import com.ugive.exceptions.MoneyTransactionException;
-import com.ugive.requests.PaymentRequest;
-import com.ugive.exceptions.EntityNotFoundException;
 import com.ugive.mappers.PaymentMapper;
 import com.ugive.models.Payment;
 import com.ugive.models.PurchaseOffer;
@@ -11,6 +10,7 @@ import com.ugive.models.catalogs.PaymentType;
 import com.ugive.repositories.PaymentRepository;
 import com.ugive.repositories.PurchaseOfferRepository;
 import com.ugive.repositories.catalogs.PaymentTypeRepository;
+import com.ugive.requests.PaymentRequest;
 import com.ugive.services.PaymentService;
 import com.ugive.services.PurchaseOfferService;
 import com.ugive.services.UserBalanceService;
@@ -22,11 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -44,7 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment create(PaymentRequest paymentRequest) {
         Payment payment;
         try {
-        payment = paymentMapper.toEntity(paymentRequest);
+            payment = paymentMapper.toEntity(paymentRequest);
         } catch (ForbiddenChangeException e) {
             logger.error("Wrong mapping for entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -57,7 +53,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment update(Long id, PaymentRequest paymentRequest) {
         Payment payment = paymentCheck(id);
         try {
-        paymentMapper.updateEntityFromRequest(paymentRequest, payment);
+            paymentMapper.updateEntityFromRequest(paymentRequest, payment);
         } catch (ForbiddenChangeException e) {
             logger.error("Error updating payment request to entity. " + e.getMessage());
             throw new ForbiddenChangeException(e.getMessage());
@@ -96,7 +92,7 @@ public class PaymentServiceImpl implements PaymentService {
                 userBalanceService.sendMoney(customerId, offer.getSeller().getId(), offer.getPrice());
                 offerService.markAsSoldOffers(purchaseOfferId, customerId);
             }
-        }catch (MoneyTransactionException e) {
+        } catch (MoneyTransactionException e) {
             logger.error("Money  transaction was not successful");
             throw new MoneyTransactionException(e.getMessage());
         }

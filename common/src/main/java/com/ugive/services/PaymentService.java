@@ -1,15 +1,14 @@
 package com.ugive.services;
 
-import com.ugive.requests.PaymentRequest;
 import com.ugive.models.Payment;
+import com.ugive.requests.PaymentRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PaymentService {
     Payment create(PaymentRequest paymentRequest);
 
-    Payment makePayment (Long purchaseOfferId, String type, Long customerId);
+    Payment makePayment(Long purchaseOfferId, String type, Long customerId);
 
     Payment update(Long id, PaymentRequest paymentRequest);
 
