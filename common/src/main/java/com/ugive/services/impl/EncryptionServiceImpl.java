@@ -72,5 +72,4 @@ public class EncryptionServiceImpl implements EncryptionService {
             return strToDecrypt;
         }
     }
-
 }
