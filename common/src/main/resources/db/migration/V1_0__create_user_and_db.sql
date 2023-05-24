@@ -6,10 +6,10 @@
 -- INHERIT
 -- REPLICATION
 -- CONNECTION LIMIT -1
--- PASSWORD 'root';
+-- PASSWORD 'password';
 --
--- CREATE DATABASE agency
+-- CREATE DATABASE u-give
 --     WITH
---     OWNER = postgres
+--     OWNER = kate
 -- ENCODING = 'UTF8'
--- CONNECTION LIMIT = 20;
+-- CONNECTION LIMIT = 30;
