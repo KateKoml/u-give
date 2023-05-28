@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     @Transactional
     public void deleteExpiredUsers() {
         try {
