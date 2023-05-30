@@ -1,6 +1,7 @@
 package com.ugive.controllers;
 
 import com.ugive.exceptions.ValidationCheckException;
+import com.ugive.models.AuthenticationInfo;
 import com.ugive.models.Role;
 import com.ugive.models.User;
 import com.ugive.models.catalogs.ProductCategory;
@@ -8,6 +9,7 @@ import com.ugive.repositories.UserRepository;
 import com.ugive.repositories.catalogs.ProductCategoryRepository;
 import com.ugive.requests.RoleRequest;
 import com.ugive.requests.catalogs.ProductCategoryRequest;
+import com.ugive.security.config.JwtConfig;
 import com.ugive.services.PaymentService;
 import com.ugive.services.RoleService;
 import com.ugive.services.UserBalanceService;
@@ -17,6 +19,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +46,28 @@ public class AdminController {
     private final UserBalanceService balanceService;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductCategoryService categoryService;
+    private final PasswordEncoder encoder;
+    private final JwtConfig configuration;
+
+    @PutMapping("/users/passwords")
+    public ResponseEntity<Object> updateUsersPasswords() {
+
+        List<User> all = userRepository.findAll();
+
+        for (User user : all) {
+            AuthenticationInfo authenticationInfo = user.getAuthenticationInfo();
+
+            String password = authenticationInfo.getPassword() + configuration.getPasswordSalt();
+            String encodedPassword = encoder.encode(password);
+
+            authenticationInfo.setPassword(encodedPassword);
+            user.setAuthenticationInfo(authenticationInfo);
+            userRepository.save(user);
+        }
+
+        return new ResponseEntity<>(all.size(), HttpStatus.OK);
+    }
+
 
     @GetMapping("/roles")
     public ResponseEntity<List<Role>> findAll() {

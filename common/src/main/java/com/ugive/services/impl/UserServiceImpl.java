@@ -16,6 +16,7 @@ import com.ugive.repositories.UserBalanceRepository;
 import com.ugive.repositories.UserRepository;
 import com.ugive.requests.UserRequest;
 import com.ugive.services.UserService;
+import com.ugive.utils.PasswordEncode;
 import lombok.RequiredArgsConstructor;
 import org.apache.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,7 +27,6 @@ import org.springframework.scheduling.SchedulingException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PurchaseOfferRepository offerRepository;
     private final UserBalanceRepository userBalanceRepository;
     private final UserMapper userMapper;
+    private final PasswordEncode passwordEncode;
 
     @Override
     @Transactional
@@ -64,6 +65,10 @@ public class UserServiceImpl implements UserService {
         if (userRole != null) {
             user.getRoles().add(userRole);
         }
+
+        String encodedPassword = passwordEncode.encodePassword(user.getAuthenticationInfo().getPassword());
+        user.getAuthenticationInfo().setPassword(encodedPassword);
+
         userRepository.save(user);
 
         try {
@@ -196,7 +201,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteExpiredUsers() {
         try {

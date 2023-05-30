@@ -25,6 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @NonNull
     Optional<User> findById(Long id);
 
+    Optional<User> findByAuthenticationInfoEmail(String email);
+
     @Cacheable("users")
     @NonNull
     Page<User> findAll(Pageable pageable);

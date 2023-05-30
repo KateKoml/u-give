@@ -58,7 +58,7 @@ public class UserRequest implements Serializable {
             type = "string", description = "User login")
     private String login;
 
-    @Size(min = 6, max = 20)
+    @Size(min = 6, max = 200)
     @Pattern(message = "Password should be from 6 to 20 characters, containing numbers, lowercase and uppercase letters.",
             regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$")
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "fyjhhk57FHg",

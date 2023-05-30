@@ -46,7 +46,15 @@ spring:
           starttls.enable: true
 
 ---
+
 caffeine:
   initialCapacity: 30
   maximumSize: 1000
   expireAfterAccessHours: 5
+
+---
+
+config:
+  secret: "gfjghkYT"
+  expiration: 600000
+  passwordSalt: ou022439-i9t5-tc96-cl21-0954oy095167
